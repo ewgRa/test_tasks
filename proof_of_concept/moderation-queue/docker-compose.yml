@@ -1,0 +1,17 @@
+version: '3'
+services:
+  rabbit:
+    image: rabbitmq:3.7-management
+    container_name: rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - "$PWD/rabbitmq/data/log:/data/log"
+      - "$PWD/rabbitmq/data/mnesia:/data/mnesia"
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - "$PWD/redis/data:/data"
