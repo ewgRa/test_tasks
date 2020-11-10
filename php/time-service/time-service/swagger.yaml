@@ -1,0 +1,77 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Time service API
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:8001/v1
+paths:
+  /earth2mars:
+    post:
+      security:
+        - basicAuth: []
+      summary: "By the time on Earth in UTC as input returns two values: the Mars Sol Date (MSD) and the Martian Coordinated Time (MTC)"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - datetime
+              properties:
+                datetime:
+                  type: string
+                  description: String with datetime in ISO 8601 standard
+            examples:
+              test:
+                summary: Test request
+                value:
+                  datetime: "1994-11-05T13:15:30Z"
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/AuthorizationError'
+        '200':
+          description: Earth time converted to MSD and MTC
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - msd
+                  - mtc
+                properties:
+                  msd:
+                    type: string
+                    description: String with datetime in ISO 8601 standard
+                  mtc:
+                    type: string
+                    description: String with datetime in ISO 8601 standard
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  responses:
+    BadRequest:
+      description: Bad request, e.g. datetime can't be parsed, etc.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - errors
+            properties:
+              errors:
+                description: Errors explained
+                type: object
+                items:
+                  type: string
+    AuthorizationError:
+      description: Wrong credentials
+    UnauthorizedError:
+      description: Access token is missing or invalid
