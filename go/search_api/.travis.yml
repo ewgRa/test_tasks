@@ -1,0 +1,24 @@
+services:
+  - docker
+
+language: go
+
+env:
+  - GO111MODULE=on ES_URL=http://localhost:9200 API_LISTEN=:8080 JWT_SECRET=local_dev_not_a_secret ES_INDEX=test
+
+cache:
+  directories:
+    - $GOPATH/pkg/mod
+
+go:
+  - 1.12.9
+
+sudo: true
+
+before_install:
+  - sudo sh build/travis/run_es_docker.sh
+  - go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.17.1
+
+script:
+  - make lint
+  - make test

@@ -1,0 +1,184 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Products API
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:8080/v1
+paths:
+  /products:
+    get:
+      security:
+        - bearerAuth: []
+      summary: List of products
+      operationId: listProducts
+      tags:
+        - products
+      parameters:
+        - name: q
+          in: query
+          description: Query, fulltext search
+          required: false
+          schema:
+            type: string
+        - name: brand
+          in: query
+          description: Brand filter
+          required: false
+          schema:
+            type: string
+        - name: order_by
+          in: query
+          description: Order by
+          schema:
+            type: string
+            default: price
+            enum: [title, brand, price, stock]
+        - name: sort
+          in: query
+          description: Sort order
+          schema:
+            type: string
+            default: asc
+            enum: [asc, desc]
+        - name: offset
+          in: query
+          description: Offset
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+            default: 0
+        - name: limit
+          in: query
+          description: Limit
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            default: 10
+      responses:
+        '200':
+          description: A paged array of products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Products"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /login:
+    post:
+      summary: Authorize
+      operationId: login
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+            examples:
+              test:
+                summary: Test credentials
+                value:
+                  username: test
+                  password: test
+      responses:
+        '401':
+          $ref: '#/components/responses/AuthorizationError'
+        '200':
+          description: Auth information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/Login"
+
+  /refresh_token:
+    get:
+      security:
+        - bearerAuth: []
+      summary: Refresh token
+      operationId: refreshToken
+      tags:
+        - auth
+      responses:
+        '200':
+          description: New token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                $ref: "#/components/responses/Login"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+  schemas:
+    Product:
+      type: object
+      required:
+        - title
+        - brand
+        - price
+        - stock
+      properties:
+        title:
+          type: string
+        brand:
+          type: string
+        price:
+          type: number
+          format: double
+        stock:
+          type: integer
+          format: int64
+    Products:
+      type: array
+      items:
+        $ref: "#/components/schemas/Product"
+  responses:
+    BadRequest:
+      description: Bad request
+    AuthorizationError:
+      description: Wrong credentials
+    UnauthorizedError:
+      description: Access token is missing or invalid
+    Login:
+      type: object
+      required:
+        - code
+        - expire
+        - token
+      properties:
+        code:
+          type: integer
+        expire:
+          type: string
+        token:
+          type: string
+

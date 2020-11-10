@@ -1,0 +1,62 @@
+version: '3.7'
+
+services:
+  api-storage:
+    image: elasticsearch:7.3.1
+    container_name: go-test-task-api-storage
+    environment:
+      - cluster.name=dev.local
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - "data:/usr/share/elasticsearch/data"
+    ports:
+      - 9200:9200
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+  api:
+    build:
+      context: .
+      dockerfile: build/Dockerfile.local
+    container_name: go-test-task-api
+    depends_on: ["api-storage"]
+    links:
+      - api-storage
+    environment:
+      - API_LISTEN=:8080
+      - ALLOW_ORIGINS=http://localhost:8090
+      - JWT_SECRET=local_dev_not_a_secret
+      - ES_URL=http://api-storage:9200
+      - ES_INDEX=products_local
+    ports:
+      - 8080:8080
+    volumes:
+      - "$PWD:/go-test-task"
+    working_dir: /go-test-task/cmd/api
+    command: go run api.go
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthcheck"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+  api-swagger:
+    image: swaggerapi/swagger-ui
+    container_name: go-test-task-api-swagger
+    ports:
+      - 8090:8080
+    environment:
+      - SWAGGER_JSON=/swagger-ui/api.swagger.yaml
+    volumes:
+      - "$PWD/build:/swagger-ui"
+volumes:
+  data:
