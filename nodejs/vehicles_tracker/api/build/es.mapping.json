@@ -1,0 +1,24 @@
+{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "type": {
+        "type": "keyword"
+      },
+      "lat": {
+        "type": "double"
+      },
+      "lng": {
+        "type": "double"
+      },
+      "bearing": {
+        "type": "double"
+      },
+      "at": {
+        "type": "date"
+      }
+    }
+  }
+}

@@ -1,0 +1,96 @@
+version: '3.7'
+
+services:
+  api:
+    build:
+      dockerfile: build/Dockerfile.local
+      context: .
+    container_name: nodejs-test-task-api
+    environment:
+      - ES_URL=http://storage:9200
+      - ES_INDEX=shuttle_allygator_local
+      - KAFKA_HOST=kafka:9092
+      - KAFKA_TOPIC=local
+      - LISTEN_PORT=8080
+      - CITY_CENTER_LAT=52.53
+      - CITY_CENTER_LNG=13.403
+      - CITY_CENTER_RADIUS=350000
+    ports:
+      - 8080:8080
+    volumes:
+      - "$PWD:/app"
+    working_dir: /app
+    depends_on:
+      - kafka
+      - storage
+    command: node_modules/.bin/nodemon app.js
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthcheck"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+    networks:
+      - nodejs-test-task
+
+  api-swagger:
+    image: swaggerapi/swagger-ui
+    container_name: nodejs-test-task-api-swagger
+    ports:
+      - 8090:8080
+    environment:
+      - SWAGGER_JSON=/swagger-ui/api.swagger.yaml
+    volumes:
+      - "$PWD/build:/swagger-ui"
+
+  zookeeper:
+    image: confluent/zookeeper:latest
+    ports:
+      - 2181:2181
+    environment:
+      zk_id: 1
+    networks:
+      - nodejs-test-task
+
+  kafka:
+    image: confluent/kafka:latest
+    container_name: nodejs-test-task-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    networks:
+      - nodejs-test-task
+
+  storage:
+    image: elasticsearch:7.3.1
+    container_name: nodejs-test-task-storage
+    environment:
+      - cluster.name=dev.local
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - "nodejs-test-task-storage:/usr/share/elasticsearch/data"
+    ports:
+      - 9200:9200
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+    networks:
+      - nodejs-test-task
+
+networks:
+  nodejs-test-task:
+
+volumes:
+  nodejs-test-task-storage:

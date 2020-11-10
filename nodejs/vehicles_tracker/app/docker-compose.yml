@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  broadcast-renderer:
+    container_name: nodejs-test-task-broadcast-renderer
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - '$PWD:/app'
+    ports:
+      - '3001:3000'
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_BROADCAST_URL=ws://localhost:8080/vehicles/broadcast

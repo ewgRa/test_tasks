@@ -1,0 +1,4 @@
+FROM node:12.10.0-alpine
+
+RUN apk add --no-cache --virtual make
+RUN apk add --no-cache --virtual curl

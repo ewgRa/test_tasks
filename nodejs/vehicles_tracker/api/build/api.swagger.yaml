@@ -1,0 +1,122 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Allygator shuttle service
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:8080
+paths:
+  /vehicles:
+    post:
+      summary: Vehicle registration
+      operationId: vehicleRegistration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: string
+      responses:
+        '204':
+          description: Vehicle registered
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/BadRequest'
+
+  /vehicles/{id}:
+    delete:
+      summary: Vehicle de-registration
+      operationId: vehicleDeRegistration
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Vehicle ID
+      responses:
+        '204':
+          description: Vehicle de-registered
+        '400':
+          description: Bad request, there is no registered vehicle with such id found
+
+  /vehicles/{id}/locations:
+    post:
+      summary: Update vehicle location
+      operationId: updateVehicleLocation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Vehicle ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - lat
+                - lng
+                - at
+              properties:
+                lat:
+                  type: number
+                  format: float
+                  example: 52.53
+                lng:
+                  type: number
+                  format: float
+                  example: 13.403
+                at:
+                  type: string
+                  format: date-time
+                  example: "2017-07-21T17:32:28Z"
+      responses:
+        '204':
+          description: Location updated
+          headers:
+            X-AllygatorShuttle-Update-Ignored:
+              schema:
+                type: string
+              description: This header returned in case if location update was ignored due to coordinates out of city boundaries.
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/BadRequest'
+
+components:
+  responses:
+    BadRequest:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required:
+              - msg
+              - param
+              - location
+            properties:
+              msg:
+                type: string
+              param:
+                type: string
+              location:
+                type: string

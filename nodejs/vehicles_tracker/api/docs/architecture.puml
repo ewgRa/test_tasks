@@ -1,0 +1,16 @@
+@startuml
+Car -> API: Register
+API -> Kafka: Register event
+Car -> API: Location update
+API -> Kafka: Location update event
+API -> Elasticsearch: Store update
+Car -> API: De-register
+API -> Kafka: Deregister event
+...
+Consumer -> API: Broadcast pull
+API -> Kafka: consume events
+Kafka -> API: Events
+API -> Consumer: Events
+note right: cars visualization
+
+@enduml
