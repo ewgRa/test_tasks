@@ -2,16 +2,15 @@ package products_test
 
 import (
 	"fmt"
+	"github.com/ewgra/go-test-task/pkg/api/products"
+	"github.com/gin-gonic/gin"
+	"github.com/olivere/elastic/v7"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-
-	"github.com/ewgra/go-test-task/pkg/api/products"
-	"github.com/gin-gonic/gin"
-	"github.com/olivere/elastic/v7"
-	"github.com/pkg/errors"
 )
 
 func TestSearchHandler(t *testing.T) {
@@ -64,7 +63,6 @@ func TestSearchHandler(t *testing.T) {
 				elastic.SetHealthcheck(false),
 				elastic.SetSniff(false),
 			)
-
 			if err != nil {
 				t.Errorf(errors.WithMessage(err, "Can't create elasticsearch client").Error())
 				return

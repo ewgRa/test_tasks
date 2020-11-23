@@ -1,10 +1,9 @@
 package middleware
 
 import (
-	"time"
-
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 type login struct {

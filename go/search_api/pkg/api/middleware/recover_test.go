@@ -3,16 +3,14 @@ package middleware_test
 import (
 	"bytes"
 	"errors"
+	"github.com/ewgra/go-test-task/pkg/api/middleware"
+	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
-
-	"github.com/ewgra/go-test-task/pkg/api/middleware"
-	"github.com/gin-gonic/gin"
 )
 
 func TestRecover(t *testing.T) {

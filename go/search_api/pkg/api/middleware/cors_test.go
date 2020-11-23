@@ -1,13 +1,12 @@
 package middleware_test
 
 import (
+	"github.com/ewgra/go-test-task/pkg/api/middleware"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-
-	"github.com/ewgra/go-test-task/pkg/api/middleware"
-	"github.com/gin-gonic/gin"
 )
 
 func TestCors(t *testing.T) {

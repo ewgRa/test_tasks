@@ -3,40 +3,40 @@ package integration_test
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ewgra/go-test-task/pkg/api"
+	"github.com/ewgra/go-test-task/pkg/api/middleware"
+	"github.com/kelseyhightower/envconfig"
+	"github.com/pkg/errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-
-	"github.com/ewgra/go-test-task/pkg/api"
-	"github.com/ewgra/go-test-task/pkg/api/middleware"
-	"github.com/kelseyhightower/envconfig"
-
-	"github.com/pkg/errors"
 )
 
 func TestAPI(t *testing.T) {
 	var cfg api.Config
-	err := envconfig.Process("", &cfg)
 
+	err := envconfig.Process("", &cfg)
 	if err != nil {
 		t.Errorf(errors.WithMessage(err, "Can't process config").Error())
+
 		return
 	}
 
 	s, err := api.CreateAPIEngine(&cfg)
-
 	if err != nil {
 		t.Errorf(errors.WithMessage(err, "Can't create server").Error())
+
 		return
 	}
 
-	request, _ := http.NewRequest(http.MethodGet, "/v1/products?q=Jeans", nil)
+	request := httptest.NewRequest(http.MethodGet, "/v1/products?q=Jeans", nil)
 	response := httptest.NewRecorder()
 	err = addAuthorization(s, request)
 
 	if err != nil {
 		t.Errorf(errors.WithMessage(err, "Can't authorize request").Error())
+
 		return
 	}
 
@@ -46,6 +46,7 @@ func TestAPI(t *testing.T) {
 
 	if response.Code != wantStatus {
 		t.Errorf("Got %v response code, %v expected", response.Code, wantStatus)
+
 		return
 	}
 
@@ -54,6 +55,7 @@ func TestAPI(t *testing.T) {
 
 	if got != want {
 		t.Errorf("Got %q response, want %q", got, want)
+
 		return
 	}
 
@@ -65,13 +67,14 @@ func TestAPI(t *testing.T) {
 
 	if allowOrigin == cfg.AllowOrigins {
 		t.Errorf("Allow origins headers not set, want %q, got %q", cfg.AllowOrigins, allowOrigin)
+
 		return
 	}
 }
 
 func addAuthorization(handler http.Handler, r *http.Request) error {
 	requestBody := strings.NewReader(`{"username": "test", "password": "test"}`)
-	request, _ := http.NewRequest(http.MethodPost, "/v1/login", requestBody)
+	request := httptest.NewRequest(http.MethodPost, "/v1/login", requestBody)
 	request.Header.Set("Content-type", "application/json")
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, request)
@@ -85,7 +88,6 @@ func addAuthorization(handler http.Handler, r *http.Request) error {
 	}
 
 	err := json.Unmarshal(response.Body.Bytes(), &data)
-
 	if err != nil {
 		return errors.WithMessage(err, "Can't unmarshal response")
 	}

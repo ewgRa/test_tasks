@@ -2,7 +2,7 @@
 
 # Build production ready docker image
 build:
-	docker build -t go-test-task-api-app -f build/Dockerfile .
+	docker build -t go-test-task-api -f build/Dockerfile .
 
 # Shell into local docker api instance
 docker-api:
@@ -13,6 +13,12 @@ test:ES_INDEX=products_test
 test:
 	$(MAKE) load-test-data
 	GIN_MODE=release go test -race -v ./...
+
+# Format code
+format:
+	gofumpt -w .
+	gci -w .
+	goimports -w .
 
 # Run lint checks, used for CI
 lint:

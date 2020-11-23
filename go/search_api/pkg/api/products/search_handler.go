@@ -3,13 +3,13 @@ package products
 import (
 	"context"
 	"encoding/json"
-	"net/http"
-	"sync"
-
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/olivere/elastic/v7"
 	"github.com/rs/zerolog/log"
 	"github.com/sony/gobreaker"
+	"net/http"
+	"sync"
 )
 
 // NewSearchHandler create handler that process products search requests.
@@ -57,7 +57,6 @@ func (ph *searchHandler) Handle(c *gin.Context) {
 	}
 
 	searchResult, err := ph.doSearch(c.Request.Context(), productsRequest)
-
 	if err != nil {
 		if e, ok := err.(*elastic.Error); ok {
 			log.Ctx(c.Request.Context()).Error().
@@ -81,7 +80,6 @@ func (ph *searchHandler) doSearch(ctx context.Context, request *searchRequest) (
 	res, err := ph.circuitBreaker.Execute(func() (interface{}, error) {
 		return service.Do(ctx)
 	})
-
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +110,6 @@ func (ph *searchHandler) searchSource(request *searchRequest) *elastic.SearchSou
 
 func (ph *searchHandler) flushResult(c *gin.Context, result *elastic.SearchResult) {
 	productsJSON, err := ph.productsJSON(result)
-
 	if err != nil {
 		log.Ctx(c.Request.Context()).Error().Err(err).Msg("Can't marshal search results")
 		c.Status(http.StatusInternalServerError)
@@ -132,9 +129,8 @@ func (ph *searchHandler) productsJSON(res *elastic.SearchResult) ([]byte, error)
 			product := resp.product()
 
 			err := json.Unmarshal(hit.Source, product)
-
 			if err != nil {
-				return []byte{}, err
+				return []byte{}, fmt.Errorf("failed to unmarshal products json %s: %v", hit.Source, err)
 			}
 
 			resp.Data = append(resp.Data, product)

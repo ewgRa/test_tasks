@@ -1,16 +1,14 @@
 package middleware_test
 
 import (
+	"github.com/ewgra/go-test-task/pkg/api/middleware"
+	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
-
-	"github.com/ewgra/go-test-task/pkg/api/middleware"
-	"github.com/gin-gonic/gin"
 )
 
 func TestCorrelationIdGeneration(t *testing.T) {
@@ -23,6 +21,7 @@ func TestCorrelationIdGeneration(t *testing.T) {
 
 	if headerValue == "" {
 		t.Errorf("Can't find correlation id in response header")
+
 		return
 	}
 
@@ -30,16 +29,20 @@ func TestCorrelationIdGeneration(t *testing.T) {
 
 	if !exists {
 		t.Errorf("Can't find correlation id in context")
+
 		return
 	}
 
 	if contextValue != headerValue {
 		t.Errorf("Correlation id in context and in header should be the same")
+
 		return
 	}
 
 	if log.Ctx(c.Request.Context()).GetLevel() == zerolog.Disabled {
 		t.Errorf("Don't see that logger for request context is configured properly")
+
+		return
 	}
 }
 
@@ -55,6 +58,7 @@ func TestCorrelationIdProvidedInRequest(t *testing.T) {
 
 	if headerValue != wantID {
 		t.Errorf("Correlation id header should be the same as in request")
+
 		return
 	}
 }

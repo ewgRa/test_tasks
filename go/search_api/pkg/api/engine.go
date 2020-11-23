@@ -1,14 +1,13 @@
 package api
 
 import (
-	"net/http"
-
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/ewgra/go-test-task/pkg/api/middleware"
 	"github.com/ewgra/go-test-task/pkg/api/products"
 	"github.com/gin-gonic/gin"
 	"github.com/olivere/elastic/v7"
 	"github.com/pkg/errors"
+	"net/http"
 )
 
 // Config store environment settings to setup api engine
@@ -31,7 +30,6 @@ func CreateAPIEngine(cfg *Config) (*gin.Engine, error) {
 	addHealthcheckEndpoint(r)
 
 	authMiddleware, err := middleware.AuthMiddleware(cfg.JwtSecret)
-
 	if err != nil {
 		return nil, errors.WithMessage(err, "Can't create auth middleware")
 	}
@@ -60,7 +58,6 @@ func addProductsEndpoint(cfg *Config, group *gin.RouterGroup) error {
 	esClient, err := elastic.NewClient(
 		elastic.SetURL(cfg.EsURL),
 	)
-
 	if err != nil {
 		return errors.WithMessage(err, "Can't create elasticsearch client")
 	}

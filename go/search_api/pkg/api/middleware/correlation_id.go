@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	// CorrelationIDHeader header key, that used to store correlation id in response headers
+	// CorrelationIDHeader header key, that used to store correlation id in response headers.
 	CorrelationIDHeader = "X-Correlation-Id"
-	// CorrelationIDCtxValue context key, that used to store correlation id in context
+	// CorrelationIDCtxValue context key, that used to store correlation id in context.
 	CorrelationIDCtxValue = "correlationId"
 )
 
@@ -17,7 +17,7 @@ const (
 // Correlation id is used for tracing and debugging,
 // more information can be found here https://www.scalyr.com/blog/microservices-logging-best-practices.
 // A logger that automatically adds correlation id to log records will be stored to the request context.
-// You should obtain logger in handlers from context: "log.Ctx(c.Request.Context())"
+// You should obtain logger in handlers from context: "log.Ctx(c.Request.Context())".
 func CorrelationIDMiddleware(c *gin.Context) {
 	id := c.GetHeader(CorrelationIDHeader)
 

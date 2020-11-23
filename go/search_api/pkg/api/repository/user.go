@@ -1,6 +1,8 @@
 package repository
 
-func GetUser(id int) *User {
+import "github.com/ewgra/go-test-task/pkg/api/model"
+
+func GetUser(id int) *model.User {
 	// select it from db
-	return user
+	return nil
 }

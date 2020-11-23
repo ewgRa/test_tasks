@@ -1,17 +1,15 @@
 package main
 
 import (
-	"time"
-
-	"github.com/kelseyhightower/envconfig"
-
 	"github.com/Rican7/retry"
 	"github.com/Rican7/retry/backoff"
 	"github.com/Rican7/retry/strategy"
 	"github.com/ewgra/go-test-task/pkg/api"
 	"github.com/gin-gonic/gin"
+	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"time"
 )
 
 func main() {
@@ -19,9 +17,9 @@ func main() {
 
 	var cfg api.Config
 	err := envconfig.Process("", &cfg)
-
 	if err != nil {
 		log.Fatal().Err(err).Msg("Can't process environment variables")
+
 		return
 	}
 
@@ -43,6 +41,7 @@ func main() {
 
 	if nil != err {
 		log.Fatal().Err(err).Msg("Create server failed")
+
 		return
 	}
 

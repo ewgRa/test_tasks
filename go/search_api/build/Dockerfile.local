@@ -1,3 +1,5 @@
-FROM golang:1.12.9
+FROM golang:1.15.5
 
-RUN GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.17.1
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.33.0
+RUN go get mvdan.cc/gofumpt
+RUN go get github.com/daixiang0/gci
