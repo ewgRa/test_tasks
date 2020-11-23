@@ -4,12 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/olivere/elastic/v7"
-	"github.com/rs/zerolog/log"
-	"github.com/sony/gobreaker"
 	"net/http"
 	"sync"
+
+	"github.com/gin-gonic/gin"
+	"github.com/olivere/elastic/v7"
+	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
+	"github.com/sony/gobreaker"
 )
 
 // NewSearchHandler create handler that process products search requests.
@@ -53,12 +55,15 @@ func (ph *searchHandler) Handle(c *gin.Context) {
 
 	if err := c.ShouldBindQuery(productsRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
 		return
 	}
 
 	searchResult, err := ph.doSearch(c.Request.Context(), productsRequest)
 	if err != nil {
-		if e, ok := err.(*elastic.Error); ok {
+		var e *elastic.Error
+
+		if errors.As(err, &e) {
 			log.Ctx(c.Request.Context()).Error().
 				Msgf("Search request to elasticsearch failed with status %d and error %v.", e.Status, e.Details)
 		} else {
@@ -66,6 +71,7 @@ func (ph *searchHandler) Handle(c *gin.Context) {
 		}
 
 		c.Status(http.StatusInternalServerError)
+
 		return
 	}
 
@@ -77,11 +83,12 @@ func (ph *searchHandler) doSearch(ctx context.Context, request *searchRequest) (
 	service := ph.searchService().SearchSource(source)
 
 	ctx.Deadline()
+
 	res, err := ph.circuitBreaker.Execute(func() (interface{}, error) {
 		return service.Do(ctx)
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error when execute circuit breaker for search: %w", err)
 	}
 
 	return res.(*elastic.SearchResult), nil
@@ -113,6 +120,7 @@ func (ph *searchHandler) flushResult(c *gin.Context, result *elastic.SearchResul
 	if err != nil {
 		log.Ctx(c.Request.Context()).Error().Err(err).Msg("Can't marshal search results")
 		c.Status(http.StatusInternalServerError)
+
 		return
 	}
 
@@ -130,7 +138,7 @@ func (ph *searchHandler) productsJSON(res *elastic.SearchResult) ([]byte, error)
 
 			err := json.Unmarshal(hit.Source, product)
 			if err != nil {
-				return []byte{}, fmt.Errorf("failed to unmarshal products json %s: %v", hit.Source, err)
+				return []byte{}, fmt.Errorf("failed to unmarshal products json %s: %w", hit.Source, err)
 			}
 
 			resp.Data = append(resp.Data, product)

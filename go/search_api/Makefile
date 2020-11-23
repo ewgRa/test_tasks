@@ -18,7 +18,6 @@ test:
 format:
 	gofumpt -w .
 	gci -w .
-	goimports -w .
 
 # Run lint checks, used for CI
 lint:

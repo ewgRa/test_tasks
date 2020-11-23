@@ -2,15 +2,16 @@ package products_test
 
 import (
 	"fmt"
-	"github.com/ewgra/go-test-task/pkg/api/products"
-	"github.com/gin-gonic/gin"
-	"github.com/olivere/elastic/v7"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/ewgra/go-test-task/pkg/api/products"
+	"github.com/gin-gonic/gin"
+	"github.com/olivere/elastic/v7"
+	"github.com/pkg/errors"
 )
 
 func TestSearchHandler(t *testing.T) {
@@ -46,6 +47,8 @@ func TestSearchHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(fmt.Sprintf("query:%s", tc.query), func(t *testing.T) {
+			t.Parallel()
+
 			var esQuery string
 
 			server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
@@ -65,6 +68,7 @@ func TestSearchHandler(t *testing.T) {
 			)
 			if err != nil {
 				t.Errorf(errors.WithMessage(err, "Can't create elasticsearch client").Error())
+
 				return
 			}
 
@@ -82,6 +86,8 @@ func TestSearchHandler(t *testing.T) {
 }
 
 func TestSearchHandlerBadRequest(t *testing.T) {
+	t.Parallel()
+
 	handler := products.NewSearchHandler(&elastic.Client{}, 300, "test")
 	response := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(response)
@@ -93,6 +99,7 @@ func TestSearchHandlerBadRequest(t *testing.T) {
 	)
 
 	handler(c)
+
 	wantCode := http.StatusBadRequest
 
 	if response.Code != wantCode {

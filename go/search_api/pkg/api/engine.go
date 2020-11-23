@@ -1,16 +1,17 @@
 package api
 
 import (
+	"net/http"
+
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/ewgra/go-test-task/pkg/api/middleware"
 	"github.com/ewgra/go-test-task/pkg/api/products"
 	"github.com/gin-gonic/gin"
 	"github.com/olivere/elastic/v7"
 	"github.com/pkg/errors"
-	"net/http"
 )
 
-// Config store environment settings to setup api engine
+// Config store environment settings to setup api engine.
 type Config struct {
 	Listen       string `envconfig:"API_LISTEN" required:"true"`
 	AllowOrigins string `envconfig:"ALLOW_ORIGINS" default:"*"`
@@ -65,6 +66,7 @@ func addProductsEndpoint(cfg *Config, group *gin.RouterGroup) error {
 	productsHandler := products.NewSearchHandler(esClient, cfg.EsTimeout, cfg.EsIndex)
 
 	group.GET("/products", productsHandler)
+
 	return nil
 }
 

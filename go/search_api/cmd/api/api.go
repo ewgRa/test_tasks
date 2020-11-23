@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/Rican7/retry"
 	"github.com/Rican7/retry/backoff"
 	"github.com/Rican7/retry/strategy"
@@ -9,13 +12,13 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"time"
 )
 
 func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnixMs
 
 	var cfg api.Config
+
 	err := envconfig.Process("", &cfg)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Can't process environment variables")
@@ -34,7 +37,7 @@ func main() {
 				log.Error().Err(err).Msg("Fail to create server")
 			}
 
-			return err
+			return fmt.Errorf("fail to create server: %w", err)
 		},
 		strategy.Backoff(backoff.Linear(1*time.Second)),
 	)

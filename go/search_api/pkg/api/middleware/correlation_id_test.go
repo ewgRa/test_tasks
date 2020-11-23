@@ -1,17 +1,20 @@
 package middleware_test
 
 import (
-	"github.com/ewgra/go-test-task/pkg/api/middleware"
-	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/ewgra/go-test-task/pkg/api/middleware"
+	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 func TestCorrelationIdGeneration(t *testing.T) {
+	t.Parallel()
+
 	response := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(response)
 	c.Request, _ = http.NewRequest(http.MethodGet, "/", strings.NewReader(""))
@@ -47,6 +50,8 @@ func TestCorrelationIdGeneration(t *testing.T) {
 }
 
 func TestCorrelationIdProvidedInRequest(t *testing.T) {
+	t.Parallel()
+
 	response := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(response)
 	wantID := "baobab"

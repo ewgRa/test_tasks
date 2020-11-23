@@ -2,21 +2,25 @@ package middleware_test
 
 import (
 	"bytes"
-	"errors"
-	"github.com/ewgra/go-test-task/pkg/api/middleware"
-	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/ewgra/go-test-task/pkg/api/middleware"
+	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 func TestRecover(t *testing.T) {
+	t.Parallel()
+
 	logWriter := bytes.NewBufferString("")
 	oldLogger := log.Logger
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: logWriter})
+
 	defer func() { log.Logger = oldLogger }()
 
 	r := gin.New()
@@ -32,11 +36,13 @@ func TestRecover(t *testing.T) {
 
 	if response.Code != http.StatusInternalServerError {
 		t.Errorf("Expected to have internal server error status code")
+
 		return
 	}
 
 	if !strings.Contains(logWriter.String(), "test panic recover") {
 		t.Errorf("Can't find log record about panic")
+
 		return
 	}
 }

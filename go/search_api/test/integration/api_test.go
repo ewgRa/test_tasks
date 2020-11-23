@@ -3,17 +3,20 @@ package integration_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ewgra/go-test-task/pkg/api"
-	"github.com/ewgra/go-test-task/pkg/api/middleware"
-	"github.com/kelseyhightower/envconfig"
-	"github.com/pkg/errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/ewgra/go-test-task/pkg/api"
+	"github.com/ewgra/go-test-task/pkg/api/middleware"
+	"github.com/kelseyhightower/envconfig"
+	"github.com/pkg/errors"
 )
 
 func TestAPI(t *testing.T) {
+	t.Parallel()
+
 	var cfg api.Config
 
 	err := envconfig.Process("", &cfg)
@@ -76,6 +79,7 @@ func addAuthorization(handler http.Handler, r *http.Request) error {
 	requestBody := strings.NewReader(`{"username": "test", "password": "test"}`)
 	request := httptest.NewRequest(http.MethodPost, "/v1/login", requestBody)
 	request.Header.Set("Content-type", "application/json")
+
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, request)
 

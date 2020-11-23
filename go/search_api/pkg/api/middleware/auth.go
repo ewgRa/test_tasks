@@ -1,9 +1,15 @@
 package middleware
 
 import (
+	"time"
+
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"time"
+)
+
+const (
+	timeout    = 15 // minutes
+	maxRefresh = 15 // minutes
 )
 
 type login struct {
@@ -22,8 +28,8 @@ type User struct {
 func AuthMiddleware(jwtSecret string) (*jwt.GinJWTMiddleware, error) {
 	return jwt.New(&jwt.GinJWTMiddleware{
 		Key:        []byte(jwtSecret),
-		Timeout:    15 * time.Minute,
-		MaxRefresh: 15 * time.Minute,
+		Timeout:    timeout * time.Minute,
+		MaxRefresh: maxRefresh * time.Minute,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*User); ok {
 				return jwt.MapClaims{
