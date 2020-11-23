@@ -46,6 +46,8 @@ func TestSearchHandler(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
+		tc := tc
+
 		t.Run(fmt.Sprintf("query:%s", tc.query), func(t *testing.T) {
 			t.Parallel()
 

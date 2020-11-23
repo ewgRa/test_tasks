@@ -21,7 +21,7 @@ format:
 
 # Run lint checks, used for CI
 lint:
-	golangci-lint run --enable-all --exclude-use-default=false --exclude "Using the variable on range scope \`tc\` in function literal"
+	golangci-lint run --enable-all --exclude-use-default=false --disable exhaustivestruct --exclude "Range statement for test .* does not use range value in test Run"
 
 # Load data to elasticsearch test index, used for performing integration tests
 load-test-data:
