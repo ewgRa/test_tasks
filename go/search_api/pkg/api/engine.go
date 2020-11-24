@@ -5,7 +5,7 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/ewgra/go-test-task/pkg/api/middleware"
-	"github.com/ewgra/go-test-task/pkg/api/products"
+	"github.com/ewgra/go-test-task/pkg/api/products/search"
 	"github.com/gin-gonic/gin"
 	"github.com/olivere/elastic/v7"
 	"github.com/pkg/errors"
@@ -63,7 +63,7 @@ func addProductsEndpoint(cfg *Config, group *gin.RouterGroup) error {
 		return errors.WithMessage(err, "Can't create elasticsearch client")
 	}
 
-	productsHandler := products.NewSearchHandler(esClient, cfg.EsTimeout, cfg.EsIndex)
+	productsHandler := search.NewSearchHandler(esClient, cfg.EsTimeout, cfg.EsIndex)
 
 	group.GET("/products", productsHandler)
 

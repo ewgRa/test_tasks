@@ -1,4 +1,4 @@
-package products_test
+package search_test
 
 import (
 	"fmt"
@@ -8,17 +8,19 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ewgra/go-test-task/pkg/api/products"
+	"github.com/ewgra/go-test-task/pkg/api/products/search"
 	"github.com/gin-gonic/gin"
 	"github.com/olivere/elastic/v7"
 	"github.com/pkg/errors"
 )
 
-func TestSearchHandler(t *testing.T) {
-	testCases := []struct {
-		query string // query string that represent pkg/api/products/search_request.go
-		want  string
-	}{
+type searchTest struct {
+	query string // query string that represent pkg/api/products/search_request.go
+	want  string
+}
+
+func searchHandlerTestSet() []searchTest {
+	return []searchTest{
 		{
 			query: "q=Jeans", // test query filter
 			want: `{"from":0,"query":{"bool":{"must":{"match":{"title":{"query":"Jeans"}}}}},"size":10,` +
@@ -44,6 +46,12 @@ func TestSearchHandler(t *testing.T) {
 			want:  ``,
 		},
 	}
+}
+
+func TestSearchHandler(t *testing.T) {
+	t.Parallel()
+
+	testCases := searchHandlerTestSet()
 
 	for _, tc := range testCases {
 		tc := tc
@@ -62,21 +70,14 @@ func TestSearchHandler(t *testing.T) {
 
 			defer server.Close()
 
-			esClient, err := elastic.NewClient(
-				elastic.SetURL(server.URL),
-				elastic.SetHttpClient(server.Client()),
-				elastic.SetHealthcheck(false),
-				elastic.SetSniff(false),
-			)
+			handler, err := createSearchHandler(server)
 			if err != nil {
-				t.Errorf(errors.WithMessage(err, "Can't create elasticsearch client").Error())
+				t.Errorf(errors.WithMessage(err, "Can't create search handler").Error())
 
 				return
 			}
 
-			handler := products.NewSearchHandler(esClient, 300, "test")
-			response := httptest.NewRecorder()
-			c, _ := gin.CreateTestContext(response)
+			c, _ := gin.CreateTestContext(httptest.NewRecorder())
 			c.Request, _ = http.NewRequest(http.MethodGet, fmt.Sprintf("/?%s", tc.query), strings.NewReader(""))
 			handler(c)
 
@@ -87,10 +88,24 @@ func TestSearchHandler(t *testing.T) {
 	}
 }
 
+func createSearchHandler(server *httptest.Server) (gin.HandlerFunc, error) {
+	esClient, err := elastic.NewClient(
+		elastic.SetURL(server.URL),
+		elastic.SetHttpClient(server.Client()),
+		elastic.SetHealthcheck(false),
+		elastic.SetSniff(false),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("can't create new elasticsearch client: %w", err)
+	}
+
+	return search.NewSearchHandler(esClient, 300, "test"), nil
+}
+
 func TestSearchHandlerBadRequest(t *testing.T) {
 	t.Parallel()
 
-	handler := products.NewSearchHandler(&elastic.Client{}, 300, "test")
+	handler := search.NewSearchHandler(nil, 300, "test")
 	response := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(response)
 

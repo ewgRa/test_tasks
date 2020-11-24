@@ -1,4 +1,4 @@
-package products
+package search
 
 import (
 	"context"
@@ -21,11 +21,11 @@ func NewSearchHandler(esClient *elastic.Client, timeout int, index string) gin.H
 	esCircuitBreaker := gobreaker.NewCircuitBreaker(circuitBreakerSettings)
 
 	requestPool := &sync.Pool{
-		New: func() interface{} { return newSearchRequest() },
+		New: func() interface{} { return newRequest() },
 	}
 
 	responsePool := &sync.Pool{
-		New: func() interface{} { return newSearchResponse() },
+		New: func() interface{} { return newResponse() },
 	}
 
 	handler := &searchHandler{
@@ -50,7 +50,7 @@ type searchHandler struct {
 }
 
 func (ph *searchHandler) Handle(c *gin.Context) {
-	productsRequest := ph.requestPool.Get().(*searchRequest)
+	productsRequest := ph.requestPool.Get().(*request)
 	defer ph.requestPool.Put(productsRequest)
 
 	if err := c.ShouldBindQuery(productsRequest); err != nil {
@@ -78,7 +78,7 @@ func (ph *searchHandler) Handle(c *gin.Context) {
 	ph.flushResult(c, searchResult)
 }
 
-func (ph *searchHandler) doSearch(ctx context.Context, request *searchRequest) (*elastic.SearchResult, error) {
+func (ph *searchHandler) doSearch(ctx context.Context, request *request) (*elastic.SearchResult, error) {
 	source := ph.searchSource(request)
 	service := ph.searchService().SearchSource(source)
 
@@ -94,7 +94,7 @@ func (ph *searchHandler) doSearch(ctx context.Context, request *searchRequest) (
 	return res.(*elastic.SearchResult), nil
 }
 
-func (ph *searchHandler) searchSource(request *searchRequest) *elastic.SearchSource {
+func (ph *searchHandler) searchSource(request *request) *elastic.SearchSource {
 	boolQuery := elastic.NewBoolQuery()
 
 	if request.Query != "" {
@@ -128,7 +128,7 @@ func (ph *searchHandler) flushResult(c *gin.Context, result *elastic.SearchResul
 }
 
 func (ph *searchHandler) productsJSON(res *elastic.SearchResult) ([]byte, error) {
-	resp := ph.responsePool.Get().(*searchResponse)
+	resp := ph.responsePool.Get().(*response)
 	defer ph.responsePool.Put(resp)
 	resp.reset()
 

@@ -4,16 +4,6 @@
 build:
 	docker build -t go-test-task-api -f build/Dockerfile .
 
-# Shell into local docker api instance
-docker-api:
-	docker exec -w /go-test-task -ti go-test-task-api /bin/bash
-
-# Run tests, run it inside local docker api instance (make docker-api -> make test)
-test:ES_INDEX=products_test
-test:
-	$(MAKE) load-test-data
-	GIN_MODE=release go test -race -v ./...
-
 # Format code
 format:
 	gofumpt -w .
@@ -22,6 +12,16 @@ format:
 # Run lint checks, used for CI
 lint:
 	golangci-lint run --enable-all --exclude-use-default=false --disable exhaustivestruct --exclude "Range statement for test .* does not use range value in test Run"
+
+# Shell into local docker api instance
+shell-docker-api:
+	docker exec -w /go-test-task -ti go-test-task-api /bin/bash
+
+# Run tests, run it inside local docker api instance (make docker-api -> make test)
+test:ES_INDEX=products_test
+test:
+	$(MAKE) load-test-data
+	GIN_MODE=release go test -race -v ./...
 
 # Load data to elasticsearch test index, used for performing integration tests
 load-test-data:

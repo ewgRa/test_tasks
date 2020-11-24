@@ -17,37 +17,55 @@ import (
 func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnixMs
 
-	var cfg api.Config
-
-	err := envconfig.Process("", &cfg)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Can't process environment variables")
+	cfg, err := createConfig()
+	if nil != err {
+		log.Fatal().Caller().Err(err).Msg("Fail to create config")
 
 		return
 	}
 
+	engine, err := createEngine(cfg)
+	if nil != err {
+		log.Fatal().Caller().Err(err).Msg("Fail to create engine")
+
+		return
+	}
+
+	log.Info().Caller().Msg("Start server")
+	log.Fatal().Caller().Err(engine.Run(cfg.Listen)).Msg("Fail to listen and serve")
+}
+
+func createEngine(cfg *api.Config) (*gin.Engine, error) {
 	var engine *gin.Engine
 
-	err = retry.Retry(
+	retryErr := retry.Retry(
 		func(attempt uint) error {
-			log.Info().Uint("attempt", attempt).Msg("Trying to create a server")
-			engine, err = api.CreateAPIEngine(&cfg)
+			log.Info().Caller().Uint("attempt", attempt).Msg("Trying to create api engine")
 
+			var err error
+
+			engine, err = api.CreateAPIEngine(cfg)
 			if err != nil {
-				log.Error().Err(err).Msg("Fail to create server")
+				log.Error().Caller().Uint("attempt", attempt).Err(err).Msg("Fail to create api engine")
+
+				return fmt.Errorf("fail to create api engine at %v attempt: %w", attempt, err)
 			}
 
-			return fmt.Errorf("fail to create server: %w", err)
+			return nil
 		},
 		strategy.Backoff(backoff.Linear(1*time.Second)),
 	)
 
-	if nil != err {
-		log.Fatal().Err(err).Msg("Create server failed")
+	return engine, fmt.Errorf("fail to create engine: %w", retryErr)
+}
 
-		return
+func createConfig() (*api.Config, error) {
+	var cfg *api.Config
+
+	err := envconfig.Process("", cfg)
+	if err != nil {
+		return nil, fmt.Errorf("can't process environment variables: %w", err)
 	}
 
-	log.Info().Msg("Start server")
-	log.Fatal().Err(engine.Run(cfg.Listen)).Msg("Fail to listen and serve")
+	return cfg, nil
 }

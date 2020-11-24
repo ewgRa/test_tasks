@@ -1,28 +1,28 @@
-package products
+package search
 
 import (
 	"sync"
 )
 
-func newSearchResponse() *searchResponse {
+func newResponse() *response {
 	productPool := &sync.Pool{
 		New: func() interface{} { return &product{} },
 	}
 
-	return &searchResponse{productPool: productPool}
+	return &response{productPool: productPool}
 }
 
-type searchResponse struct {
+type response struct {
 	Data []*product `json:"data"`
 
 	productPool *sync.Pool
 }
 
-func (sr *searchResponse) product() *product {
+func (sr *response) product() *product {
 	return sr.productPool.Get().(*product)
 }
 
-func (sr *searchResponse) reset() {
+func (sr *response) reset() {
 	for _, product := range sr.Data {
 		sr.productPool.Put(product)
 	}

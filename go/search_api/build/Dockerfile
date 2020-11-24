@@ -1,4 +1,4 @@
-FROM golang:1.12.9
+FROM golang:1.15.5
 
 WORKDIR /go-test-task
 

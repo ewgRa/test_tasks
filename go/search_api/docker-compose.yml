@@ -42,6 +42,7 @@ services:
       - 8080:8080
     volumes:
       - "$PWD:/go-test-task"
+      - "go-pkg:/go/pkg:delegated"
     working_dir: /go-test-task/cmd/api
     command: go run api.go
     healthcheck:
@@ -60,3 +61,4 @@ services:
       - "$PWD/build:/swagger-ui"
 volumes:
   data:
+  go-pkg:

@@ -1,10 +1,10 @@
-package products
+package search
 
-func newSearchRequest() *searchRequest {
-	return &searchRequest{}
+func newRequest() *request {
+	return &request{}
 }
 
-type searchRequest struct {
+type request struct {
 	Query   string `form:"q,default="`
 	Brand   string `form:"brand,default="`
 	OrderBy string `form:"order_by,default=price" binding:"eq=title|eq=brand|eq=price|eq=stock"`

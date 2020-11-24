@@ -7,6 +7,7 @@ info:
 servers:
   - url: http://localhost:8080/v1
 paths:
+  # FIXME XXX: healthcheck, liveness, readiness
   /products:
     get:
       security:
