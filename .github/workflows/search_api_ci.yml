@@ -20,7 +20,7 @@ jobs:
       - run: docker-compose pull
       - uses: satackey/action-docker-layer-caching@v0.0.8
         continue-on-error: true
-      - run: docker-compose up --build
+      - run: docker-compose up api-storage --build
       - name: Install utils
         run: |
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.33.0

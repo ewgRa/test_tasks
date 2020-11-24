@@ -11,6 +11,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+func NewConfig() *Config {
+	return &Config{}
+}
+
 // Config store environment settings to setup api engine.
 type Config struct {
 	Listen       string `envconfig:"API_LISTEN" required:"true"`

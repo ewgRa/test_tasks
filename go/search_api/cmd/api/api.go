@@ -56,11 +56,15 @@ func createEngine(cfg *api.Config) (*gin.Engine, error) {
 		strategy.Backoff(backoff.Linear(1*time.Second)),
 	)
 
-	return engine, fmt.Errorf("fail to create engine: %w", retryErr)
+	if retryErr != nil {
+		return nil, fmt.Errorf("fail to create engine: %w", retryErr)
+	}
+
+	return engine, nil
 }
 
 func createConfig() (*api.Config, error) {
-	var cfg *api.Config
+	cfg := api.NewConfig()
 
 	err := envconfig.Process("", cfg)
 	if err != nil {
