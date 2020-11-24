@@ -7,32 +7,27 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/pkg/errors"
+
 	"github.com/ewgra/go-test-task/pkg/api/middleware"
 	"github.com/gin-gonic/gin"
-	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
-func TestRecover(t *testing.T) {
-	t.Parallel()
-
-	logWriter := bytes.NewBufferString("")
-	oldLogger := log.Logger
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: logWriter})
+// Here we test how good we recover from panic inside middleware.
+// This can't be a parallel test, since we replace log.Logger.
+//nolint:paralleltest
+func TestRecoverFromMiddlewarePanic(t *testing.T) {
+	oldLogger, logWriter := mockLogger()
 
 	defer func() { log.Logger = oldLogger }()
 
-	r := gin.New()
-	r.Use(middleware.RecoverMiddleware)
-	r.Use(middleware.CorrelationIDMiddleware)
-	r.Use(panicMiddleware)
-	r.GET("/")
+	panicMiddleware := func(ctx *gin.Context) {
+		panic(errors.New("test panic recover from middleware"))
+	}
 
-	response := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(response)
-	c.Request, _ = http.NewRequest(http.MethodGet, "/", strings.NewReader(""))
-	r.HandleContext(c)
+	response := request([]gin.HandlerFunc{panicMiddleware}, nil)
 
 	if response.Code != http.StatusInternalServerError {
 		t.Errorf("Expected to have internal server error status code")
@@ -40,13 +35,59 @@ func TestRecover(t *testing.T) {
 		return
 	}
 
-	if !strings.Contains(logWriter.String(), "test panic recover") {
+	if !strings.Contains(logWriter.String(), "test panic recover from middleware") {
 		t.Errorf("Can't find log record about panic")
 
 		return
 	}
 }
 
-func panicMiddleware(c *gin.Context) {
-	panic(errors.New("test panic recover"))
+// Here we test how good we recover from panic inside handler.
+// This can't be a parallel test, since we replace log.Logger.
+//nolint:paralleltest
+func TestRecoverFromHandlerPanic(t *testing.T) {
+	oldLogger, logWriter := mockLogger()
+
+	defer func() { log.Logger = oldLogger }()
+
+	panicHandler := func(ctx *gin.Context) {
+		panic(errors.New("test panic recover from handler"))
+	}
+
+	response := request(nil, []gin.HandlerFunc{panicHandler})
+
+	if response.Code != http.StatusInternalServerError {
+		t.Errorf("Expected to have internal server error status code")
+
+		return
+	}
+
+	if !strings.Contains(logWriter.String(), "test panic recover from handler") {
+		t.Errorf("Can't find log record about panic")
+
+		return
+	}
+}
+
+func mockLogger() (zerolog.Logger, *bytes.Buffer) {
+	oldLogger := log.Logger
+	logWriter := bytes.NewBufferString("")
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: logWriter})
+
+	return oldLogger, logWriter
+}
+
+func request(middlewares []gin.HandlerFunc, handlers []gin.HandlerFunc) *httptest.ResponseRecorder {
+	engine := gin.New()
+	engine.Use(middleware.RecoverMiddleware)
+	engine.Use(middleware.CorrelationIDMiddleware)
+	engine.Use(middlewares...)
+	engine.GET("/", handlers...)
+
+	response := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(response)
+	c.Request, _ = http.NewRequest(http.MethodGet, "/", strings.NewReader(""))
+	engine.HandleContext(c)
+
+	return response
 }
