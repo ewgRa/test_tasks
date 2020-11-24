@@ -31,7 +31,11 @@ jobs:
         run: |
           wget https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.3/wait -O wait && chmod +x wait
           docker-compose up -d api-storage
+          docker ps
+          docker-compose logs api-storage
           ./wait
+          docker ps
+          docker-compose logs api-storage
           curl http://localhost:9200
           make test
           docker-compose stop
