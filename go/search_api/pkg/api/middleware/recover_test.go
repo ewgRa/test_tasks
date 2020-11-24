@@ -61,7 +61,7 @@ func TestRecoverFromHandlerPanic(t *testing.T) {
 		return
 	}
 
-	if !strings.Contains(logWriter.String(), "test panic recover from handler") {
+	if !strings.Contains(logWriter.String(), "test panic recovr from handler") {
 		t.Errorf("Can't find log record about panic")
 
 		return
