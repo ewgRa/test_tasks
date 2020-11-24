@@ -1,3 +1,4 @@
+// Package search provide functionality to handle search product endpoint.
 package search
 
 import (

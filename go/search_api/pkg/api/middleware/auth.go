@@ -1,3 +1,4 @@
+// Package middleware package provide middleware for Gin framework like auth, correlation id, cors and recover.
 package middleware
 
 import (

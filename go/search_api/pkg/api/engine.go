@@ -1,3 +1,4 @@
+// Package api provide gin engine (router) and other common files.
 package api
 
 import (
@@ -11,6 +12,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// NewConfig create new config instance to provide configuration to engine.
 func NewConfig() *Config {
 	return &Config{}
 }

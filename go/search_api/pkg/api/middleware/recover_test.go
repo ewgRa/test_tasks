@@ -7,10 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pkg/errors"
-
 	"github.com/ewgra/go-test-task/pkg/api/middleware"
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
