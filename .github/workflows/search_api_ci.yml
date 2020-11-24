@@ -17,21 +17,19 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1
+      - name: Lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.33.0
+          make lint
       - run: docker-compose pull
       - uses: satackey/action-docker-layer-caching@v0.0.8
         continue-on-error: true
-      - run: docker-compose up --build -d api-storage
-      - name: Install utils
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.33.0
-          go get mvdan.cc/gofumpt
-          go get github.com/daixiang0/gci
-      - name: Lint
-        run: |
-          make lint
       - name: Test
         env:
           ES_URL: http://localhost:9200
+          WAIT_HOSTS: localhost:9200
         run: |
-          make test
-      - run: docker-compose stop
+          wget https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.3/wait /wait && chmod +x /wait
+          docker-compose up --build -d api-storage
+          /wait && make test
+          docker-compose stop
