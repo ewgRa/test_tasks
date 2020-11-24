@@ -29,7 +29,7 @@ jobs:
           ES_URL: http://localhost:9200
           WAIT_HOSTS: localhost:9200
         run: |
-          wget https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.3/wait /wait && chmod +x /wait
+          wget https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.3/wait -O wait && chmod +x wait
           docker-compose up --build -d api-storage
-          /wait && make test
+          ./wait && make test
           docker-compose stop
