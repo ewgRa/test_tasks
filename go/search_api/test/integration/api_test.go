@@ -2,53 +2,45 @@ package integration_test
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"github.com/ewgra/go-test-task/pkg/api"
-	"github.com/ewgra/go-test-task/pkg/api/middleware"
+	"github.com/ewgRa/test_tasks/go/search_api/pkg/api"
+	"github.com/ewgRa/test_tasks/go/search_api/pkg/api/middleware"
+	"github.com/gin-gonic/gin"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/pkg/errors"
 )
 
 func TestAPI(t *testing.T) {
 	t.Parallel()
 
-	var cfg api.Config
-
-	err := envconfig.Process("", &cfg)
+	cfg, engine, err := createEngine()
 	if err != nil {
-		t.Errorf(errors.WithMessage(err, "Can't process config").Error())
-
-		return
-	}
-
-	s, err := api.CreateAPIEngine(&cfg)
-	if err != nil {
-		t.Errorf(errors.WithMessage(err, "Can't create server").Error())
+		t.Errorf("Can't create engine: %v", err)
 
 		return
 	}
 
 	request := httptest.NewRequest(http.MethodGet, "/v1/products?q=Jeans", nil)
 	response := httptest.NewRecorder()
-	err = addAuthorization(s, request)
 
+	err = addAuthorization(engine, request)
 	if err != nil {
-		t.Errorf(errors.WithMessage(err, "Can't authorize request").Error())
+		t.Errorf("Can't authorize request: %v", err)
 
 		return
 	}
 
-	s.ServeHTTP(response, request)
+	engine.ServeHTTP(response, request)
 
-	wantStatus := 200
+	wantStatus := http.StatusOK
 
 	if response.Code != wantStatus {
-		t.Errorf("Got %v response code, %v expected", response.Code, wantStatus)
+		t.Errorf("Got %q response code, %q expected", response.Code, wantStatus)
 
 		return
 	}
@@ -75,6 +67,8 @@ func TestAPI(t *testing.T) {
 	}
 }
 
+var errUnexpectedResponseCode = errors.New("unexpected response code")
+
 func addAuthorization(handler http.Handler, r *http.Request) error {
 	requestBody := strings.NewReader(`{"username": "test", "password": "test"}`)
 	request := httptest.NewRequest(http.MethodPost, "/v1/login", requestBody)
@@ -84,7 +78,7 @@ func addAuthorization(handler http.Handler, r *http.Request) error {
 	handler.ServeHTTP(response, request)
 
 	if response.Code != http.StatusOK {
-		return errors.New("Unexpected response code")
+		return errUnexpectedResponseCode
 	}
 
 	var data struct {
@@ -93,10 +87,26 @@ func addAuthorization(handler http.Handler, r *http.Request) error {
 
 	err := json.Unmarshal(response.Body.Bytes(), &data)
 	if err != nil {
-		return errors.WithMessage(err, "Can't unmarshal response")
+		return fmt.Errorf("can't unmarshal response: %w", err)
 	}
 
 	r.Header.Add("Authorization", fmt.Sprintf("Bearer %s", data.Token))
 
 	return nil
+}
+
+func createEngine() (*api.Config, *gin.Engine, error) {
+	cfg := api.NewConfig()
+
+	err := envconfig.Process("", cfg)
+	if err != nil {
+		return nil, nil, fmt.Errorf("can't process environment for config: %w", err)
+	}
+
+	engine, err := api.CreateAPIEngine(cfg)
+	if err != nil {
+		return nil, nil, fmt.Errorf("can't create API engine: %w", err)
+	}
+
+	return cfg, engine, nil
 }

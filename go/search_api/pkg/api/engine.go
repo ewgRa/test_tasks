@@ -2,14 +2,14 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
-	"github.com/ewgra/go-test-task/pkg/api/middleware"
-	"github.com/ewgra/go-test-task/pkg/api/products/search"
+	"github.com/ewgRa/test_tasks/go/search_api/pkg/api/middleware"
+	"github.com/ewgRa/test_tasks/go/search_api/pkg/api/products/search"
 	"github.com/gin-gonic/gin"
 	"github.com/olivere/elastic/v7"
-	"github.com/pkg/errors"
 )
 
 // NewConfig create new config instance to provide configuration to engine.
@@ -19,7 +19,7 @@ func NewConfig() *Config {
 
 // Config store environment settings to setup api engine.
 type Config struct {
-	Listen       string `envconfig:"API_LISTEN" required:"true"`
+	Listen       string `envconfig:"API_LISTEN" default:":8080"`
 	AllowOrigins string `envconfig:"ALLOW_ORIGINS" default:"*"`
 	JwtSecret    string `envconfig:"JWT_SECRET" required:"true"`
 	EsTimeout    int    `envconfig:"ES_TIMEOUT" default:"300"`
@@ -38,7 +38,7 @@ func CreateAPIEngine(cfg *Config) (*gin.Engine, error) {
 
 	authMiddleware, err := middleware.AuthMiddleware(cfg.JwtSecret)
 	if err != nil {
-		return nil, errors.WithMessage(err, "Can't create auth middleware")
+		return nil, fmt.Errorf("can't create auth middleware: %w", err)
 	}
 
 	addAuthEndpoints(r, authMiddleware)
@@ -49,7 +49,7 @@ func CreateAPIEngine(cfg *Config) (*gin.Engine, error) {
 	err = addProductsEndpoint(cfg, v1)
 
 	if err != nil {
-		return nil, errors.WithMessage(err, "Can't add products endpoint")
+		return nil, fmt.Errorf("can't add products endpoint: %w", err)
 	}
 
 	return r, nil
@@ -66,7 +66,7 @@ func addProductsEndpoint(cfg *Config, group *gin.RouterGroup) error {
 		elastic.SetURL(cfg.EsURL),
 	)
 	if err != nil {
-		return errors.WithMessage(err, "Can't create elasticsearch client")
+		return fmt.Errorf("can't create elasticsearch client: %w", err)
 	}
 
 	productsHandler := search.NewSearchHandler(esClient, cfg.EsTimeout, cfg.EsIndex)

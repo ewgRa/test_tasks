@@ -7,9 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ewgra/go-test-task/pkg/api/middleware"
+	"github.com/ewgRa/test_tasks/go/search_api/pkg/api/middleware"
 	"github.com/gin-gonic/gin"
-	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -23,7 +22,7 @@ func TestRecoverFromMiddlewarePanic(t *testing.T) {
 	defer func() { log.Logger = oldLogger }()
 
 	panicMiddleware := func(ctx *gin.Context) {
-		panic(errors.New("test panic recover from middleware"))
+		panic("test panic recover from middleware")
 	}
 
 	response := request([]gin.HandlerFunc{panicMiddleware}, nil)
@@ -50,7 +49,7 @@ func TestRecoverFromHandlerPanic(t *testing.T) {
 	defer func() { log.Logger = oldLogger }()
 
 	panicHandler := func(ctx *gin.Context) {
-		panic(errors.New("test panic recover from handler"))
+		panic("test panic recover from handler")
 	}
 
 	response := request(nil, []gin.HandlerFunc{panicHandler})
@@ -61,7 +60,7 @@ func TestRecoverFromHandlerPanic(t *testing.T) {
 		return
 	}
 
-	if !strings.Contains(logWriter.String(), "test panic recovr from handler") {
+	if !strings.Contains(logWriter.String(), "test panic recover from handler") {
 		t.Errorf("Can't find log record about panic")
 
 		return

@@ -1,6 +1,6 @@
 FROM golang:1.15.5
 
-WORKDIR /go-test-task
+WORKDIR /app
 
 COPY go.mod .
 COPY go.sum .
@@ -9,7 +9,7 @@ RUN go mod download
 
 COPY . .
 
-WORKDIR /go-test-task/cmd/api
+WORKDIR /app/cmd/api
 
 RUN go build
 

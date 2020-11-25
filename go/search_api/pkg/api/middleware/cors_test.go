@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ewgra/go-test-task/pkg/api/middleware"
+	"github.com/ewgRa/test_tasks/go/search_api/pkg/api/middleware"
 	"github.com/gin-gonic/gin"
 )
 

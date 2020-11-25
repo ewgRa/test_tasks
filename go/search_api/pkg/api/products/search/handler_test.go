@@ -8,10 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ewgra/go-test-task/pkg/api/products/search"
+	"github.com/ewgRa/test_tasks/go/search_api/pkg/api/products/search"
 	"github.com/gin-gonic/gin"
 	"github.com/olivere/elastic/v7"
-	"github.com/pkg/errors"
 )
 
 type searchTest struct {
@@ -72,7 +71,7 @@ func TestSearchHandler(t *testing.T) {
 
 			handler, err := createSearchHandler(server)
 			if err != nil {
-				t.Errorf(errors.WithMessage(err, "Can't create search handler").Error())
+				t.Errorf("Can't create search handler: %v", err)
 
 				return
 			}

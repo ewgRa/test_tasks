@@ -7,7 +7,7 @@ import (
 	"github.com/Rican7/retry"
 	"github.com/Rican7/retry/backoff"
 	"github.com/Rican7/retry/strategy"
-	"github.com/ewgra/go-test-task/pkg/api"
+	"github.com/ewgRa/test_tasks/go/search_api/pkg/api"
 	"github.com/gin-gonic/gin"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog"

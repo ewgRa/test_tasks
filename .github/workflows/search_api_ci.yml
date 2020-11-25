@@ -1,4 +1,4 @@
-name: Continious integration
+name: GO - Search API - Continious integration
 
 on: [push, pull_request]
 
@@ -30,6 +30,6 @@ jobs:
           WAIT_HOSTS: localhost:9200
         run: |
           docker-compose up -d api-storage
-          timeout 20 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200/_cluster/health)" != "200" ]]; do sleep 2; done' || false
+          timeout 20 bash -c 'while [[ "$(docker inspect go-test-task-api-storage -f ''"{{json .State.Health.Status}}''")" != "\"healthy\"" ]]; do sleep 2; done' || false
           make test
           docker-compose stop

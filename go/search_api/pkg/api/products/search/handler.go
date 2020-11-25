@@ -4,13 +4,13 @@ package search
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/olivere/elastic/v7"
-	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/sony/gobreaker"
 )
