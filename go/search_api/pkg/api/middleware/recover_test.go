@@ -2,6 +2,7 @@ package middleware_test
 
 import (
 	"bytes"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -13,6 +14,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+var errMidlewarePanic = errors.New("test panic recover from middleware")
+
 // Here we test how good we recover from panic inside middleware.
 // This can't be a parallel test, since we replace log.Logger.
 //nolint:paralleltest
@@ -22,7 +25,7 @@ func TestRecoverFromMiddlewarePanic(t *testing.T) {
 	defer func() { log.Logger = oldLogger }()
 
 	panicMiddleware := func(ctx *gin.Context) {
-		panic("test panic recover from middleware")
+		panic(errMidlewarePanic)
 	}
 
 	response := request([]gin.HandlerFunc{panicMiddleware}, nil)

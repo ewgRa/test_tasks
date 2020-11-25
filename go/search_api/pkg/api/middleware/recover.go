@@ -12,7 +12,14 @@ import (
 func RecoverMiddleware(c *gin.Context) {
 	defer func(c *gin.Context) {
 		if rec := recover(); rec != nil {
-			log.Ctx(c.Request.Context()).Error().Err(rec.(error)).Msg("Internal server error")
+			errEvent := log.Ctx(c.Request.Context()).Error()
+
+			if err, ok := rec.(error); ok {
+				errEvent.Err(err).Msg("Internal server error")
+			} else {
+				errEvent.Msgf("Internal server error: %v", rec)
+			}
+
 			c.AbortWithStatus(http.StatusInternalServerError)
 		}
 	}(c)
