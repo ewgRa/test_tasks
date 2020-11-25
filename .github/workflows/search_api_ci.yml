@@ -28,6 +28,7 @@ jobs:
         env:
           ES_URL: http://localhost:9200
           WAIT_HOSTS: localhost:9200
+          JWT_SECRET: ci_jwt_secret_not_a_really_secret
         run: |
           docker-compose up -d api-storage
           timeout 20 bash -c 'while [[ "$(docker inspect go-test-task-api-storage -f ''"{{json .State.Health.Status}}''")" != "\"healthy\"" ]]; do sleep 2; done' || false
