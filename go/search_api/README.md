@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/ewgra/test_tasks/workflows/GO%20-%20Search%20API%20-%20Continious%20integration/badge.svg?branch=master)](https://github.com/ewgRa/test_tasks/actions?query=branch%3Amaster+workflow%3A%22Continious+integration%22)
+[![Build Status](https://github.com/ewgra/test_tasks/workflows/GO%20-%20Search%20API%20-%20Continious%20integration/badge.svg?branch=master)](https://github.com/ewgRa/test_tasks/actions?query=branch%3Amaster+workflow%3A%22CI%22)
 
 # Task definition
 Implement microservice to serve product search requests.

@@ -1,4 +1,4 @@
-name: GO - Search API - Continious integration
+name: GO - Search API - CI
 
 on: [push, pull_request]
 
