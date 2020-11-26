@@ -5,10 +5,9 @@ info:
   license:
     name: MIT
 servers:
-  - url: http://localhost:8080/v1
+  - url: http://localhost:8080
 paths:
-  # FIXME XXX: healthcheck, liveness, readiness
-  /products:
+  /v1/products:
     get:
       security:
         - bearerAuth: []
@@ -76,7 +75,7 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedError'
 
-  /login:
+  /v1/login:
     post:
       summary: Authorize
       operationId: login
@@ -112,7 +111,7 @@ paths:
               schema:
                 $ref: "#/components/responses/Login"
 
-  /refresh_token:
+  /v1/refresh_token:
     get:
       security:
         - bearerAuth: []
@@ -132,6 +131,30 @@ paths:
                 $ref: "#/components/responses/Login"
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+
+  /health/liveness:
+    get:
+      summary: Liveness probe. If response it not OK - application should be restarted
+      operationId: healthLiveness
+      tags:
+        - health
+      responses:
+        '200':
+          description: Application is ok.
+        '503':
+          description: Application needs to be restarted.
+
+  /health/readiness:
+    get:
+      summary: Readiness probe. If response it not OK - application is not ready to process requests.
+      operationId: healthReadiness
+      tags:
+        - health
+      responses:
+        '200':
+          description: Application ready to process requests.
+        '503':
+          description: Application is not ready to process requests.
 
 components:
   securitySchemes:

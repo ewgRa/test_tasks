@@ -3,7 +3,6 @@ package api
 
 import (
 	"fmt"
-	"net/http"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/ewgRa/test_tasks/go/search_api/pkg/api/middleware"
@@ -24,8 +23,6 @@ func CreateAPIEngine(cfg *Config) (*gin.Engine, error) {
 		middleware.CorsMiddleware(cfg.AllowOrigins),
 	)
 
-	addHealthcheckEndpoint(engine)
-
 	authMiddleware, err := middleware.AuthMiddleware(cfg.JwtSecret)
 	if err != nil {
 		return nil, fmt.Errorf("can't create auth middleware: %w", err)
@@ -33,9 +30,14 @@ func CreateAPIEngine(cfg *Config) (*gin.Engine, error) {
 
 	addAuthEndpoints(engine, authMiddleware)
 
-	err = addProductEndpoints(engine, authMiddleware.MiddlewareFunc(), cfg)
+	err = addProductEndpoints(engine, cfg, authMiddleware.MiddlewareFunc())
 	if err != nil {
 		return nil, fmt.Errorf("can't add product endpoints: %w", err)
+	}
+
+	err = addHealthEndpoints(engine, cfg)
+	if err != nil {
+		return nil, fmt.Errorf("can't create health endpoints: %w", err)
 	}
 
 	return engine, nil
@@ -47,7 +49,7 @@ func addAuthEndpoints(engine *gin.Engine, authMiddleware *jwt.GinJWTMiddleware) 
 	routerGroup.GET("/refresh_token", authMiddleware.MiddlewareFunc(), authMiddleware.RefreshHandler)
 }
 
-func addProductEndpoints(engine *gin.Engine, authHandler gin.HandlerFunc, cfg *Config) error {
+func addProductEndpoints(engine *gin.Engine, cfg *Config, authHandler gin.HandlerFunc) error {
 	routerGroup := engine.Group("v1")
 	routerGroup.Use(authHandler)
 
@@ -65,8 +67,17 @@ func addProductEndpoints(engine *gin.Engine, authHandler gin.HandlerFunc, cfg *C
 	return nil
 }
 
-func addHealthcheckEndpoint(engine *gin.Engine) {
-	engine.GET("/healthcheck", func(c *gin.Context) {
-		c.Status(http.StatusOK)
-	})
+func addHealthEndpoints(engine *gin.Engine, cfg *Config) error {
+	esClient, err := elastic.NewClient(
+		elastic.SetURL(cfg.EsURL),
+	)
+	if err != nil {
+		return fmt.Errorf("can't create elasticsearch client: %w", err)
+	}
+
+	health := NewHealth(esClient)
+	engine.GET("/health/liveness", health.liveness)
+	engine.GET("/health/readiness", health.readiness)
+
+	return nil
 }
