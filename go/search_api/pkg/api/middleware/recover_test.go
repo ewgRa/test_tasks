@@ -14,7 +14,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var errMidlewarePanic = errors.New("test panic recover from middleware")
+var errMiddlewarePanic = errors.New("test panic recover from middleware")
 
 // Here we test how good we recover from panic inside middleware.
 // This can't be a parallel test, since we replace log.Logger.
@@ -25,7 +25,7 @@ func TestRecoverFromMiddlewarePanic(t *testing.T) {
 	defer func() { log.Logger = oldLogger }()
 
 	panicMiddleware := func(ctx *gin.Context) {
-		panic(errMidlewarePanic)
+		panic(errMiddlewarePanic)
 	}
 
 	response := request([]gin.HandlerFunc{panicMiddleware}, nil)
@@ -70,14 +70,6 @@ func TestRecoverFromHandlerPanic(t *testing.T) {
 	}
 }
 
-func mockLogger() (zerolog.Logger, *bytes.Buffer) {
-	oldLogger := log.Logger
-	logWriter := bytes.NewBufferString("")
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: logWriter})
-
-	return oldLogger, logWriter
-}
-
 func request(middlewares []gin.HandlerFunc, handlers []gin.HandlerFunc) *httptest.ResponseRecorder {
 	engine := gin.New()
 	engine.Use(middleware.RecoverMiddleware)
@@ -91,4 +83,12 @@ func request(middlewares []gin.HandlerFunc, handlers []gin.HandlerFunc) *httptes
 	engine.HandleContext(c)
 
 	return response
+}
+
+func mockLogger() (zerolog.Logger, *bytes.Buffer) {
+	oldLogger := log.Logger
+	logWriter := bytes.NewBufferString("")
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: logWriter})
+
+	return oldLogger, logWriter
 }
