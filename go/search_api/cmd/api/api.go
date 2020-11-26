@@ -9,13 +9,13 @@ import (
 	"github.com/Rican7/retry/strategy"
 	"github.com/ewgRa/test_tasks/go/search_api/pkg/api"
 	"github.com/gin-gonic/gin"
-	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
 func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnixMs
+	gin.DefaultWriter = log.Logger
 
 	cfg, err := createConfig()
 	if nil != err {
@@ -66,9 +66,9 @@ func createEngine(cfg *api.Config) (*gin.Engine, error) {
 func createConfig() (*api.Config, error) {
 	cfg := api.NewConfig()
 
-	err := envconfig.Process("", cfg)
+	err := cfg.LoadFromEnv()
 	if err != nil {
-		return nil, fmt.Errorf("can't process environment variables: %w", err)
+		return nil, fmt.Errorf("can't process config environment variables: %w", err)
 	}
 
 	return cfg, nil

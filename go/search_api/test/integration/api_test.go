@@ -12,7 +12,6 @@ import (
 	"github.com/ewgRa/test_tasks/go/search_api/pkg/api"
 	"github.com/ewgRa/test_tasks/go/search_api/pkg/api/middleware"
 	"github.com/gin-gonic/gin"
-	"github.com/kelseyhightower/envconfig"
 )
 
 func TestAPI(t *testing.T) {
@@ -46,7 +45,7 @@ func TestAPI(t *testing.T) {
 	}
 
 	got := response.Body.String()
-	want := `{"data":[{"title":"512 Slim Taper Fit Jeans","brand":"LEVI'S","price":119.95,"stock":4}]}`
+	want := `{"products":[{"title":"512 Slim Taper Fit Jeans","brand":"LEVI'S","price":119.95,"stock":4}]}`
 
 	if got != want {
 		t.Errorf("Got %q response, want %q", got, want)
@@ -87,7 +86,7 @@ func addAuthorization(handler http.Handler, r *http.Request) error {
 
 	err := json.Unmarshal(response.Body.Bytes(), &data)
 	if err != nil {
-		return fmt.Errorf("can't unmarshal response: %w", err)
+		return fmt.Errorf("can't unmarshal login response: %w", err)
 	}
 
 	r.Header.Add("Authorization", fmt.Sprintf("Bearer %s", data.Token))
@@ -98,7 +97,7 @@ func addAuthorization(handler http.Handler, r *http.Request) error {
 func createEngine() (*api.Config, *gin.Engine, error) {
 	cfg := api.NewConfig()
 
-	err := envconfig.Process("", cfg)
+	err := cfg.LoadFromEnv()
 	if err != nil {
 		return nil, nil, fmt.Errorf("can't process environment for config: %w", err)
 	}

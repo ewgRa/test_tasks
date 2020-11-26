@@ -8,18 +8,19 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ewgRa/test_tasks/go/search_api/pkg/api/products/search"
+	"github.com/ewgRa/test_tasks/go/search_api/pkg/api/product"
+	"github.com/ewgRa/test_tasks/go/search_api/pkg/api/product/search"
 	"github.com/gin-gonic/gin"
 	"github.com/olivere/elastic/v7"
 )
 
-type searchTest struct {
-	query string // query string that represent pkg/api/products/search_request.go
+type searchTestCase struct {
+	query string // query string that represent pkg/api/products/search/request.go
 	want  string
 }
 
-func searchHandlerTestSet() []searchTest {
-	return []searchTest{
+func searchTestCases() []*searchTestCase {
+	return []*searchTestCase{
 		{
 			query: "q=Jeans", // test query filter
 			want: `{"from":0,"query":{"bool":{"must":{"match":{"title":{"query":"Jeans"}}}}},"size":10,` +
@@ -47,12 +48,10 @@ func searchHandlerTestSet() []searchTest {
 	}
 }
 
-func TestSearchHandler(t *testing.T) {
+func TestHandler(t *testing.T) {
 	t.Parallel()
 
-	testCases := searchHandlerTestSet()
-
-	for _, tc := range testCases {
+	for _, tc := range searchTestCases() {
 		tc := tc
 
 		t.Run(fmt.Sprintf("query:%s", tc.query), func(t *testing.T) {
@@ -63,22 +62,21 @@ func TestSearchHandler(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 				body, _ := ioutil.ReadAll(req.Body)
 				_ = req.Body.Close()
-
 				esQuery = string(body)
 			}))
 
 			defer server.Close()
 
-			handler, err := createSearchHandler(server)
+			handler, err := createHandler(server)
 			if err != nil {
-				t.Errorf("Can't create search handler: %v", err)
+				t.Errorf("Can't create search Handler: %v", err)
 
 				return
 			}
 
 			c, _ := gin.CreateTestContext(httptest.NewRecorder())
 			c.Request, _ = http.NewRequest(http.MethodGet, fmt.Sprintf("/?%s", tc.query), strings.NewReader(""))
-			handler(c)
+			handler.Handle(c)
 
 			if esQuery != tc.want {
 				t.Errorf("Got %q elasticsearch query, want %q", esQuery, tc.want)
@@ -87,7 +85,7 @@ func TestSearchHandler(t *testing.T) {
 	}
 }
 
-func createSearchHandler(server *httptest.Server) (gin.HandlerFunc, error) {
+func createHandler(server *httptest.Server) (*search.Handler, error) {
 	esClient, err := elastic.NewClient(
 		elastic.SetURL(server.URL),
 		elastic.SetHttpClient(server.Client()),
@@ -98,13 +96,15 @@ func createSearchHandler(server *httptest.Server) (gin.HandlerFunc, error) {
 		return nil, fmt.Errorf("can't create new elasticsearch client: %w", err)
 	}
 
-	return search.NewSearchHandler(esClient, 300, "test"), nil
+	repository := product.NewRepository(esClient, 300, "test")
+
+	return search.NewHandler(repository), nil
 }
 
-func TestSearchHandlerBadRequest(t *testing.T) {
+func TestHandlerBadRequest(t *testing.T) {
 	t.Parallel()
 
-	handler := search.NewSearchHandler(nil, 300, "test")
+	handler := search.NewHandler(nil)
 	response := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(response)
 
@@ -114,7 +114,7 @@ func TestSearchHandlerBadRequest(t *testing.T) {
 		strings.NewReader(""),
 	)
 
-	handler(c)
+	handler.Handle(c)
 
 	wantCode := http.StatusBadRequest
 
