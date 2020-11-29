@@ -1,0 +1,23 @@
+name: PHP - Time service - CI
+
+on: [push, pull_request]
+
+jobs:
+  ci:
+    defaults:
+      run:
+        working-directory: php/time_service
+    if: github.repository == 'ewgra/test_tasks'
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: pecl
+          extensions: intl
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Test
+        run: |
+          make test

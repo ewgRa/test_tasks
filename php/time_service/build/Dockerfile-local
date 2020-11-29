@@ -1,0 +1,14 @@
+FROM php:7.4-cli
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y wget git libicu-dev \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install intl
+
+RUN wget https://get.symfony.com/cli/installer -O - | bash \
+    && mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+
+COPY build/install_composer.sh .
+RUN sh install_composer.sh

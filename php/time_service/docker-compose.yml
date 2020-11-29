@@ -5,21 +5,21 @@ services:
     container_name: php-test-task-time-service
     build:
       context: .
-      dockerfile: devops/Dockerfile-local
+      dockerfile: build/Dockerfile-local
     environment:
       - CORS_ALLOW_ORIGIN=*
     volumes:
-      - './time-service:/app'
+      - '$PWD:/app:delegated'
     ports:
-      - '8001:8000'
+      - 8080:8000
     command: ["symfony", "server:start"]
 
   time-service-api-swagger:
     image: swaggerapi/swagger-ui
     container_name: php-test-task-time-service-swagger
     ports:
-      - 8091:8080
+      - 8090:8080
     environment:
-      - SWAGGER_JSON=/swagger-ui/swagger.yaml
+      - SWAGGER_JSON=/swagger.yaml
     volumes:
-      - "$PWD/time-service:/swagger-ui"
+      - "$PWD/swagger.yaml:/swagger.yaml"
