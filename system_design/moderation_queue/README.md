@@ -1,3 +1,5 @@
+[![System design - Moderation queue - CI](https://github.com/ewgRa/test_tasks/workflows/System%20design%20-%20Moderation%20queue%20-%20CI/badge.svg?branch=master)](https://github.com/ewgRa/test_tasks/actions?query=workflow%3A%22System+design+-+Moderation+queue+-+CI%22)
+
 # Task definition
 This is proof of concept for the following task:
 

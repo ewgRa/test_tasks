@@ -32,6 +32,6 @@ jobs:
           WAIT_HOSTS: localhost:9200
         run: |
           docker-compose up -d api-storage
-          timeout 20 bash -c 'while [[ "$(docker inspect go-test-task-api-storage -f ''"{{json .State.Health.Status}}''")" != "\"healthy\"" ]]; do sleep 2; done' || false
+          timeout 20 bash -c 'while [[ "$(docker inspect test-task-go-search-api-storage -f ''"{{json .State.Health.Status}}''")" != "\"healthy\"" ]]; do sleep 2; done' || false
           make test
           docker-compose stop
