@@ -22,4 +22,4 @@ services:
     environment:
       - SWAGGER_JSON=/swagger.yaml
     volumes:
-      - "$PWD/swagger.yaml:/swagger.yaml"
+      - "$PWD/swagger.yaml:/swagger.yaml:delegated"

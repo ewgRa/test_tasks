@@ -2,7 +2,7 @@
 
 # Build production ready docker image
 build:
-	docker build -t go-test-task-api -f build/Dockerfile .
+	docker build -t test-task-go-search-api -f build/Dockerfile .
 
 # Format code
 format:
@@ -15,7 +15,7 @@ lint:
 
 # Shell into local docker api instance
 shell-docker-api:
-	docker exec -w /go-test-task -ti go-test-task-api /bin/bash
+	docker exec -w /app -ti test-task-go-search-api /bin/bash
 
 # Run tests, run it inside local docker api instance (make docker-api -> make test)
 test:ES_INDEX=products_test

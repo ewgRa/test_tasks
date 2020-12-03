@@ -1,0 +1,34 @@
+@startuml
+participant RabbitMQ
+
+Consumer -> RabbitMQ: consume queues
+RabbitMQ -> Consumer: send message
+== Message already processed ==
+Consumer -> Redis: message processed?
+Redis -> Consumer: yes
+Consumer -> RabbitMQ: acknowledge message
+== Message already locked ==
+Consumer -> Redis: message processed?
+Redis -> Consumer: no
+Consumer -> Redis: obtain lock
+Redis -> Consumer: locked by someone else
+Consumer -> Consumer: sleep TTL
+Consumer -> RabbitMQ: reject and requeue
+== Message process timeout ==
+Consumer -> Redis: message processed?
+Redis -> Consumer: no
+Consumer -> Redis: obtain lock
+Redis -> Consumer: lock obtained
+...timeout...
+Consumer -> Consumer: release lock
+Consumer -> RabbitMQ: reject and requeue
+== Message success process ==
+Consumer -> Redis: message processed?
+Redis -> Consumer: no
+Consumer -> Redis: obtain lock
+Redis -> Consumer: lock obtained
+...process...
+Consumer -> Redis: mark message as processed
+Consumer -> Consumer: release lock
+Consumer -> RabbitMQ: acknowledge
+@enduml

@@ -1,0 +1,129 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Moderation queue API
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:8080
+paths:
+  /topic:
+    post:
+      summary: Create topic
+      operationId: createTopic
+      tags:
+        - topic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - topic
+              properties:
+                topic:
+                  type: string
+            examples:
+              test:
+                summary: Test topic
+                value:
+                  topic: test_topic
+      responses:
+        '200':
+          description: Topic is created.
+
+  /category:
+    post:
+      summary: Create category for topic
+      operationId: createCategory
+      tags:
+        - topic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - topic
+                - category
+              properties:
+                topic:
+                  type: string
+                category:
+                  type: string
+            examples:
+              test:
+                summary: Test category
+                value:
+                  topic: test_topic
+                  category: test_category1
+      responses:
+        '200':
+          description: Category is created.
+
+  /message:
+    post:
+      summary: Publish message
+      operationId: createMessage
+      tags:
+        - topic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - topic
+                - message
+              properties:
+                topic:
+                  type: string
+                categories:
+                  type: array
+                  items:
+                    type: string
+                message:
+                  type: string
+            examples:
+              test:
+                summary: Test category
+                value:
+                  topic: test_topic
+                  categories: ["test_category1"]
+                  message: test_message
+      responses:
+        '200':
+          description: Category is created.
+
+  /health/liveness:
+    get:
+      summary: Liveness probe. If response it not OK - application should be restarted
+      operationId: healthLiveness
+      tags:
+        - health
+      responses:
+        '200':
+          description: Application is ok.
+        '503':
+          description: Application needs to be restarted.
+
+  /health/readiness:
+    get:
+      summary: Readiness probe. If response it not OK - application is not ready to process requests.
+      operationId: healthReadiness
+      tags:
+        - health
+      responses:
+        '200':
+          description: Application ready to process requests.
+        '503':
+          description: Application is not ready to process requests.
+
+components:
+  schemas:
+  responses:
+    BadRequest:
+      description: Bad request

@@ -1,0 +1,29 @@
+name: System design - Moderation queue - CI
+
+on: [push, pull_request]
+
+jobs:
+  ci:
+    defaults:
+      run:
+        working-directory: system_design/moderation_queue
+    if: github.repository == 'ewgra/test_tasks'
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          stable: 'false'
+          go-version: '1.15.4'
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.33.0
+          make lint
+      - run: docker-compose pull
+      - uses: satackey/action-docker-layer-caching@v0.0.8
+        continue-on-error: true
+      - name: Test
+        run: |
+          make test
