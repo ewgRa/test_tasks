@@ -1,0 +1,84 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Key generation service API
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:8080
+paths:
+  /counter-based/init:
+    put:
+      summary: "Initialize counter-based approach. It requires some initialization steps, like create ZooKeeper node, etc."
+      tags:
+        - counter-based
+      responses:
+        '200':
+          description: Successfully initialized. We are ready to generate keys.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+        '409':
+          description: Initialization was already done before.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /counter-based/key:
+    get:
+      summary: "Key generation"
+      tags:
+        - counter-based
+      responses:
+        '200':
+          description: The key was successfully generated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - key
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  key:
+                    type: string
+                    description: Generated key
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  responses:
+    InternalServerError:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - success
+              - message
+            properties:
+              success:
+                type: boolean
+                default: false
+              message:
+                type: string

@@ -13,41 +13,41 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 public class ZooKeeperConnector implements DisposableBean {
-	private ZooKeeper zoo;
+    private ZooKeeper zoo;
 
-	@Value("${zooKeeperConnectString}")
-	private final String connectString = null;
+    @Value("${zooKeeperConnectString}")
+    private String connectString;
 
-	private final int SESSION_TIMEOUT = 60000; // ms
-	private final int CONNECTION_TIMEOUT = 5; // seconds
+    private final int SESSION_TIMEOUT = 60000; // ms
+    private final int CONNECTION_TIMEOUT = 5; // seconds
 
-	public ZooKeeper getConnection() {
-		return zoo;
-	}
+    public ZooKeeper getConnection() {
+        return zoo;
+    }
 
-	@EventListener
-	public void connect(ApplicationReadyEvent event) throws Exception {
-		log.debug("Trying connect to ZooKeeper");
+    @EventListener
+    public void connect(ApplicationReadyEvent event) throws Exception {
+        log.debug("Trying to connect to ZooKeeper");
 
-		CountDownLatch connectionLatch = new CountDownLatch(1);
+        CountDownLatch connectionLatch = new CountDownLatch(1);
 
-		zoo = new ZooKeeper(connectString, SESSION_TIMEOUT, we -> {
-			if (we.getState() == Watcher.Event.KeeperState.SyncConnected) {
-				connectionLatch.countDown();
-			}
-		});
+        zoo = new ZooKeeper(connectString, SESSION_TIMEOUT, we -> {
+            if (we.getState() == Watcher.Event.KeeperState.SyncConnected) {
+                connectionLatch.countDown();
+            }
+        });
 
-		if (!connectionLatch.await(CONNECTION_TIMEOUT, TimeUnit.SECONDS) || !zoo.getState().isConnected()) {
-			log.debug("Failed connect to ZooKeeper");
-			throw new Exception("Failed connect to ZooKeeper");
-		}
+        if (!connectionLatch.await(CONNECTION_TIMEOUT, TimeUnit.SECONDS) || !zoo.getState().isConnected()) {
+            log.debug("Failed to connect to ZooKeeper");
+            throw new Exception("Failed to connect to ZooKeeper");
+        }
 
-		log.debug("Connected to ZooKeeper");
-	}
+        log.debug("Connected to ZooKeeper");
+    }
 
-	@Override
-	public void destroy() throws InterruptedException {
-		log.debug("Closing ZooKeeper connection");
-		zoo.close();
-	}
+    @Override
+    public void destroy() throws InterruptedException {
+        log.debug("Closing ZooKeeper connection");
+        zoo.close();
+    }
 }

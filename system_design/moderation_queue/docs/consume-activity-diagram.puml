@@ -14,7 +14,7 @@ Consumer -> Redis: obtain lock
 Redis -> Consumer: locked by someone else
 Consumer -> Consumer: sleep TTL
 Consumer -> RabbitMQ: reject and requeue
-== Message process timeout ==
+== Processing timeout ==
 Consumer -> Redis: message processed?
 Redis -> Consumer: no
 Consumer -> Redis: obtain lock
@@ -22,7 +22,7 @@ Redis -> Consumer: lock obtained
 ...timeout...
 Consumer -> Consumer: release lock
 Consumer -> RabbitMQ: reject and requeue
-== Message success process ==
+== Message successfully processed ==
 Consumer -> Redis: message processed?
 Redis -> Consumer: no
 Consumer -> Redis: obtain lock
@@ -30,5 +30,5 @@ Redis -> Consumer: lock obtained
 ...process...
 Consumer -> Redis: mark message as processed
 Consumer -> Consumer: release lock
-Consumer -> RabbitMQ: acknowledge
+Consumer -> RabbitMQ: acknowledge message
 @enduml

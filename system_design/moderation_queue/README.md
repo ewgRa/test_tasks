@@ -13,7 +13,6 @@ The moderation process should support timeouts when the moderator lost connectio
 # Consume activity diagram
 ![](docs/consume-activity-diagram.png)
 
-
 # Usage
 - Run `docker-compose up`
 - Open in browser Swagger UI http://localhost:8090/
