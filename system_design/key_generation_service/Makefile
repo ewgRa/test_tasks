@@ -1,3 +1,5 @@
+.PHONY: build
+
 up:
 	docker-compose up --scale api=3
 
@@ -13,3 +15,6 @@ lint:
 
 format:
 	mvn formatter:format
+
+build:
+	docker build -t test-task-system-design-key-generation-service -f build/Dockerfile .

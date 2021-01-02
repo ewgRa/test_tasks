@@ -16,3 +16,8 @@ Can be used as part of a solution for TinyURL and other services.
 
 # Development
 Please check Makefile and docker-compose.yml for understanding how the solution works under the hood.
+
+# Docker image usage
+You can find ready to use docker image on Docker Hub: https://hub.docker.com/repository/docker/ewgra/key_generation_service.
+
+In docs/docker-compose.sample.yml file you can find example of usage and customize it for your project.
