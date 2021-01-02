@@ -25,7 +25,7 @@ public class HashBasedUniqueGeneratorTest {
     }
 
     @Test
-    public void generateIsRealRandom() {
+    public void generateIsRealUnique() {
         HashBasedGenerator hashBasedGeneratorMock = mock(HashBasedGenerator.class);
         when(hashBasedGeneratorMock.generate(anyString())).thenAnswer(i -> i.getArguments()[0]);
 
