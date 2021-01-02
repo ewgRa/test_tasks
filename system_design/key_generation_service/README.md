@@ -20,4 +20,4 @@ Please check Makefile and docker-compose.yml for understanding how the solution 
 # Docker image usage
 You can find ready to use docker image on Docker Hub: https://hub.docker.com/repository/docker/ewgra/key_generation_service.
 
-In docs/docker-compose.sample.yml file you can find example of usage and customize it for your project.
+In [docs/docker-compose.sample.yml](docs/docker-compose.sample.yml) file you can find example of usage and customize it for your project.
