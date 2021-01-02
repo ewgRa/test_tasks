@@ -8,6 +8,12 @@ services:
       - zoo1
       - zoo2
       - zoo3
+    environment:
+      ZOO_KEEPER_CONNECT_STRING: zoo1:2181,zoo2:2181,zoo3:2181
+      ZOO_KEEPER_NODE: /key_generation_service_counter
+      COUNTER_RANGE_CAPACITY: 10000
+      HASH_SALT: some_salt
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health/readiness"]
       interval: 2s
