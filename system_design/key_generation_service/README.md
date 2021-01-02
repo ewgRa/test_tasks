@@ -1,3 +1,5 @@
+[![System design - Key Generation Service- CI](https://github.com/ewgRa/test_tasks/workflows/System%20design%20-%20Key%20Generation%20Service-%20CI/badge.svg?branch=master)](https://github.com/ewgRa/test_tasks/actions?query=workflow%3A%22System+design+-+Key+Generation+Service-+CI%22+branch%3Amaster)
+
 # Task definition
 Develop Key Generation Service that generates unique keys with a specific length.
 Can be used as part of a solution for TinyURL and other services.
