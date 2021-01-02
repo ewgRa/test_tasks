@@ -1,8 +1,6 @@
-// FIXME XXX: tests
-// FIXME XXX: CI
 # Task definition
-Develop Key Generation Service that generates unique keys with specific length.
-Can be used as part of solution for TinyURL and other services.
+Develop Key Generation Service that generates unique keys with a specific length.
+Can be used as part of a solution for TinyURL and other services.
 
 # High-level design
 ## Counter-based

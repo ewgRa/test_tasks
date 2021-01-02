@@ -2,10 +2,10 @@
 
 # Shell into local docker api instance
 docker-api:
-	docker exec -w /app -ti nodejs-test-task-api /bin/sh
+	docker-compose exec -w /app api /bin/sh
 
 docker-kafka:
-	docker exec -ti nodejs-test-task-kafka /bin/bash
+	docker-compose exec kafka /bin/bash
 
 # Run tests, run it inside local docker api instance (make docker-api -> make test)
 test:ES_INDEX=shuttle_allygator_test

@@ -14,7 +14,7 @@ The moderation process should support timeouts when the moderator lost connectio
 ![](docs/consume-activity-diagram.png)
 
 # Usage
-- Run `docker-compose up`
+- Run `make up`
 - Open in browser Swagger UI http://localhost:8090/
 - Create topic http://localhost:8090/#/topic/createTopic
 - Create categories for the topic http://localhost:8090/#/topic/createCategory

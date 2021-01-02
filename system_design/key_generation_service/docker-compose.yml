@@ -30,6 +30,11 @@ services:
       - "$PWD:/app:delegated"
     working_dir: /app
     command: mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dlogging.level.com.ewgra=DEBUG -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/readiness"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
 
   zoo1:
     image: zookeeper

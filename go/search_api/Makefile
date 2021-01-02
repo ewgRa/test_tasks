@@ -4,6 +4,9 @@
 build:
 	docker build -t test-task-go-search-api -f build/Dockerfile .
 
+up:
+	docker-compose up
+
 # Format code
 format:
 	gofumpt -w .
@@ -15,7 +18,7 @@ lint:
 
 # Shell into local docker api instance
 shell-docker-api:
-	docker exec -w /app -ti test-task-go-search-api /bin/bash
+	docker-compose exec -w /app api /bin/bash
 
 # Run tests, run it inside local docker api instance (make docker-api -> make test)
 test:ES_INDEX=products_test
