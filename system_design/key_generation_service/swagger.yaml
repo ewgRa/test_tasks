@@ -65,6 +65,30 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /health/liveness:
+    get:
+      summary: Liveness probe. If response it not OK - application should be restarted
+      operationId: healthLiveness
+      tags:
+        - health
+      responses:
+        '200':
+          description: Application is ok.
+        '503':
+          description: Application needs to be restarted.
+
+  /health/readiness:
+    get:
+      summary: Readiness probe. If response it not OK - application is not ready to process requests.
+      operationId: healthReadiness
+      tags:
+        - health
+      responses:
+        '200':
+          description: Application ready to process requests.
+        '503':
+          description: Application is not ready to process requests.
+
 components:
   responses:
     InternalServerError:
