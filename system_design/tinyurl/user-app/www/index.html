@@ -1,0 +1,43 @@
+<html>
+    <title>URL Shortener</title>
+    <head>
+        <script>
+            function make() {
+              document.getElementById("success_result").classList.add("hidden");
+
+              var xhttp = new XMLHttpRequest();
+
+              xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                  document.getElementById("success_result").classList.remove("hidden");
+                  // FIXME XXX: response
+                  document.getElementById("shortUrl").innerHTML = "aaa";
+                } else {
+                  // FIXME XXX: something bad happen :(
+                }
+              };
+
+              //xhttp.open("POST", "API_URL", true); // API_URL will be replaced by nginx sub_filter, see nginx.template
+              xhttp.open("GET", "/", true);
+              xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+              xhttp.send(JSON.stringify({ "longUrl": document.getElementById("longUrl").value }));
+            }
+        </script>
+        <style>
+            .hidden {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        Enter a long URL:<br />
+        <input id="longUrl" type="text" /> <button type="button" onclick="make()">Make</button>
+        <br />
+        <br />
+        <div id="success_result" class="hidden">
+            Short URL was created!
+            <br />
+            <span id="shortUrl"></span>
+        </div>
+    </body>
+</html>

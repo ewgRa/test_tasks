@@ -1,0 +1,10 @@
+server {
+    listen 8080;
+    root /www/data;
+
+    sub_filter 'API_URL' $API_URL;
+    sub_filter_once off;
+
+    location / {
+    }
+}

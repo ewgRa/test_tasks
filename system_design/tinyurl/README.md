@@ -6,6 +6,9 @@
 Develop URL shortening web service, which provides short aliases for redirection of long URLs.
 
 # High-level design
+FIXME XXX
+! NOTE: Implementation of Key Generation Service you can find here: 
+
 ![](docs/high-level-design.png)
 
 # Usage
