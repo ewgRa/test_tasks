@@ -9,3 +9,42 @@ services:
       - ./user-app/www:/www/data:ro
     ports:
       - "8080:8080"
+
+  user-api-api-swagger:
+    image: swaggerapi/swagger-ui
+    ports:
+      - 8090:8080
+    environment:
+      - SWAGGER_JSON=/swagger.yaml
+    volumes:
+      - ./user-api/swagger.yaml:/swagger.yaml:delegated
+
+  user-api-load-balancer:
+    image: nginx:latest
+    volumes:
+      - ./build/user-api-lb.nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - user-api
+    ports:
+      - "8081:8080"
+
+  user-api:
+    build:
+      context: .
+      dockerfile: build/Dockerfile.local
+    ports:
+      - 8082-8181:8080
+      - 5005-5105:5005
+    volumes:
+      - maven_repo:/root/.m2/repository
+      - ./user-api:/app:delegated
+    working_dir: /app
+    command: mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dlogging.level.com.ewgra=DEBUG -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health/readiness"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+
+volumes:
+  maven_repo:

@@ -23,7 +23,7 @@ services:
       context: .
       dockerfile: build/Dockerfile.local
     ports:
-      - 8081-8181:8080
+      - 8091-8181:8080
       - 5005-5105:5005
     volumes:
       - maven_repo:/root/.m2/repository

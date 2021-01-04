@@ -3,41 +3,64 @@
     <head>
         <script>
             function make() {
-              document.getElementById("success_result").classList.add("hidden");
+              document.getElementById("successResult").classList.add("hidden");
+              document.getElementById("errorResult").classList.add("hidden");
 
               var xhttp = new XMLHttpRequest();
 
               xhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
-                  document.getElementById("success_result").classList.remove("hidden");
-                  // FIXME XXX: response
-                  document.getElementById("shortUrl").innerHTML = "aaa";
+                  json = JSON.parse(this.responseText);
+                  document.getElementById("longUrl").innerHTML = document.getElementById("longUrlInput").value;
+                  document.getElementById("longUrlInput").value = "";
+                  document.getElementById("shortUrl").innerHTML = '<a href="'+json.shortUrl+'">'+json.shortUrl+'</a>';
+                  document.getElementById("successResult").classList.remove("hidden");
                 } else {
-                  // FIXME XXX: something bad happen :(
+                  document.getElementById("errorResult").classList.remove("hidden");
                 }
               };
 
-              //xhttp.open("POST", "API_URL", true); // API_URL will be replaced by nginx sub_filter, see nginx.template
-              xhttp.open("GET", "/", true);
+              xhttp.open("POST", "API_URL/shorten", true); // API_URL will be replaced by nginx sub_filter, see nginx.template
               xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-              xhttp.send(JSON.stringify({ "longUrl": document.getElementById("longUrl").value }));
+              xhttp.send(JSON.stringify({ "longUrl": document.getElementById("longUrlInput").value }));
             }
         </script>
         <style>
             .hidden {
                 display: none;
             }
+
+            .shortUrlCreated {
+                color: green;
+            }
+
+            #errorResult {
+                color: red;
+            }
+
+            body {
+                padding-left: 50px;
+                padding-top: 50px;
+            }
         </style>
     </head>
     <body>
+        <br />
+        <br />
         Enter a long URL:<br />
-        <input id="longUrl" type="text" /> <button type="button" onclick="make()">Make</button>
+        <input id="longUrlInput" type="text" /> <button type="button" onclick="make()">Make</button>
         <br />
         <br />
-        <div id="success_result" class="hidden">
-            Short URL was created!
+        <div id="successResult" class="hidden">
+            <span class="shortUrlCreated">Short URL was created!</span>
             <br />
-            <span id="shortUrl"></span>
+            Long URL: <span id="longUrl"></span>
+            <br />
+            Short URL: <span id="shortUrl"></span>
+        </div>
+        <div id="errorResult" class="hidden">
+            Something bad happen :(<br />
+            Please try again later.
         </div>
     </body>
 </html>
