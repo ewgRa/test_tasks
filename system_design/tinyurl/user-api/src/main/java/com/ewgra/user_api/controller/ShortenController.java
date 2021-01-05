@@ -15,16 +15,25 @@ import java.util.HashMap;
 @RestController
 public class ShortenController {
 
-    @Value("${visitorApiUrl}") String visitorApiUrl;
+    @Value("${visitorApiUrl}")
+    String visitorApiUrl;
 
     @Autowired
     KeyGenerationService keyGenerationService;
 
     @PostMapping("/shorten")
     public ResponseEntity<Object> key() {
+        String key;
+
+        try {
+            key = keyGenerationService.generate();
+        } catch (Exception e) {
+            // FIXME XXX: log
+            return internalServerError("Can't generate a key");
+        }
+
         HashMap<String, Object> response = new HashMap<>();
         response.put("success", true);
-        String key = keyGenerationService.generate();
         // FIXME XXX: store mapping longurl -> key
         response.put("shortUrl", visitorApiUrl + "/" + key);
 

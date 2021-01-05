@@ -21,3 +21,8 @@ Please check Makefile and docker-compose.yml for understanding how the solution 
 You can find ready to use docker image on Docker Hub: https://hub.docker.com/repository/docker/ewgra/key_generation_service.
 
 In [docs/docker-compose.sample.yml](docs/docker-compose.sample.yml) file you can find example of usage and customize it for your project.
+
+# TODO
+FIXME XXX: Custom keys
+FIXME XXX: Reuse keys
+FIXME XXX: Matrix of possible implementation?
