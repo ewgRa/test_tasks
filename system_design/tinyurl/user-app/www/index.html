@@ -9,14 +9,16 @@
               var xhttp = new XMLHttpRequest();
 
               xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                  json = JSON.parse(this.responseText);
-                  document.getElementById("longUrl").innerHTML = document.getElementById("longUrlInput").value;
-                  document.getElementById("longUrlInput").value = "";
-                  document.getElementById("shortUrl").innerHTML = '<a href="'+json.shortUrl+'">'+json.shortUrl+'</a>';
-                  document.getElementById("successResult").classList.remove("hidden");
-                } else {
-                  document.getElementById("errorResult").classList.remove("hidden");
+                if (this.readyState == 4) {
+                  if (this.status == 200) {
+                    json = JSON.parse(this.responseText);
+                    document.getElementById("longUrl").innerHTML = document.getElementById("longUrlInput").value;
+                    document.getElementById("longUrlInput").value = "";
+                    document.getElementById("shortUrl").innerHTML = '<a href="'+json.shortUrl+'">'+json.shortUrl+'</a>';
+                    document.getElementById("successResult").classList.remove("hidden");
+                  } else {
+                    document.getElementById("errorResult").classList.remove("hidden");
+                  }
                 }
               };
 

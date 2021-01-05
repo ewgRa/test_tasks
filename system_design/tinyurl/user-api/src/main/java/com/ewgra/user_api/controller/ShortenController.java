@@ -1,6 +1,9 @@
 package com.ewgra.user_api.controller;
 
+import com.ewgra.user_api.service.KeyGenerationService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,11 +15,18 @@ import java.util.HashMap;
 @RestController
 public class ShortenController {
 
+    @Value("${visitorApiUrl}") String visitorApiUrl;
+
+    @Autowired
+    KeyGenerationService keyGenerationService;
+
     @PostMapping("/shorten")
     public ResponseEntity<Object> key() {
         HashMap<String, Object> response = new HashMap<>();
         response.put("success", true);
-        response.put("shortUrl", "piupiu");
+        String key = keyGenerationService.generate();
+        // FIXME XXX: store mapping longurl -> key
+        response.put("shortUrl", visitorApiUrl + "/" + key);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

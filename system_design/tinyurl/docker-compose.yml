@@ -9,6 +9,8 @@ services:
       - ./user-app/www:/www/data:ro
     ports:
       - "8080:8080"
+    depends_on:
+      - user-api-load-balancer
 
   user-api-api-swagger:
     image: swaggerapi/swagger-ui
@@ -18,6 +20,8 @@ services:
       - SWAGGER_JSON=/swagger.yaml
     volumes:
       - ./user-api/swagger.yaml:/swagger.yaml:delegated
+    depends_on:
+      - user-api-load-balancer
 
   user-api-load-balancer:
     image: nginx:latest
@@ -32,8 +36,9 @@ services:
     build:
       context: .
       dockerfile: build/Dockerfile.local
+    depends_on:
+      - user-api-key-generation-service-load-balancer
     ports:
-      - 8082-8181:8080
       - 5005-5105:5005
     volumes:
       - maven_repo:/root/.m2/repository
@@ -41,10 +46,52 @@ services:
     working_dir: /app
     command: mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dlogging.level.com.ewgra=DEBUG -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/health/readiness"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/readiness"]
       interval: 2s
       timeout: 2s
       retries: 5
+
+  user-api-key-generation-service-load-balancer:
+    image: nginx:latest
+    volumes:
+      - ./build/user-api-lb.nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - user-api-key-generation-service
+
+  user-api-key-generation-service:
+    image: ewgra/key_generation_service:0.0.1
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+    environment:
+      ZOO_KEEPER_CONNECT_STRING: zoo1:2181,zoo2:2181,zoo3:2181
+      ZOO_KEEPER_NODE: /key_generation_service_counter
+      COUNTER_RANGE_CAPACITY: 100
+
+  zoo1:
+    image: zookeeper
+    restart: always
+    hostname: zoo1
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+
+  zoo2:
+    image: zookeeper
+    restart: always
+    hostname: zoo2
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zoo3:2888:3888;2181
+
+  zoo3:
+    image: zookeeper
+    restart: always
+    hostname: zoo3
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
 
 volumes:
   maven_repo:
