@@ -56,10 +56,36 @@
 			<artifactId>android-json</artifactId>
 			<version>0.0.20131108.vaadin1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<configuration>
+					<driver>org.postgresql.Driver</driver>
+					<url>${env.POSTGRES_URL}</url>
+					<user>${env.POSTGRES_USER}</user>
+					<password>${env.POSTGRES_PASSWORD}</password>
+					<baselineOnMigrate>true</baselineOnMigrate>
+					<schemas>public</schemas>
+					<locations>
+						<location>
+							filesystem:src/main/resources/db/migration
+						</location>
+					</locations>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
