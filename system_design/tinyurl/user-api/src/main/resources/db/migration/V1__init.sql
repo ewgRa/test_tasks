@@ -1,5 +1,7 @@
 CREATE TABLE url_map(
-    short_url varchar(6) PRIMARY KEY,
-    long_url varchar(2048),
-    created_at timestamp WITH TIME ZONE NOT NULL DEFAULT NOW()
+    id BIGSERIAL PRIMARY KEY,
+    short_url VARCHAR(6) NOT NULL,
+    long_url VARCHAR(2048) NOT NULL,
+    created_at timestamp WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    UNIQUE(short_url)
 );

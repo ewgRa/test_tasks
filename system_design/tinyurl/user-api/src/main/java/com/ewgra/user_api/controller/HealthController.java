@@ -25,6 +25,9 @@ public class HealthController {
         HashMap<String, Object> response = new HashMap<>();
         response.put("success", true);
 
+        // FIXME XXX: kgs connection
+        // FIXME XXX postgresql connection
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

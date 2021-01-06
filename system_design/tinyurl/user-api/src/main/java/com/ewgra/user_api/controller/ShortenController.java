@@ -1,5 +1,7 @@
 package com.ewgra.user_api.controller;
 
+import com.ewgra.user_api.model.UrlMap;
+import com.ewgra.user_api.repository.UrlMapRepository;
 import com.ewgra.user_api.service.KeyGenerationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,9 @@ public class ShortenController {
     @Autowired
     KeyGenerationService keyGenerationService;
 
+    @Autowired
+    UrlMapRepository repository;
+
     @PostMapping("/shorten")
     public ResponseEntity<Object> key() {
         String key;
@@ -32,9 +37,21 @@ public class ShortenController {
             return internalServerError("Can't generate a key");
         }
 
+        UrlMap urlMap = new UrlMap();
+        urlMap.setShortUrl(key);
+        urlMap.setLongUrl("fff");
+
+        // FIXME XXX: do it better
+        // FIXME XXX: CircuitBreaker
+        // FIXME XXX: Timeout?
+        try {
+            repository.save(urlMap);
+        } catch (Exception e) {
+            return internalServerError("Fail to save mapping");
+        }
+
         HashMap<String, Object> response = new HashMap<>();
         response.put("success", true);
-        // FIXME XXX: store mapping longurl -> key
         response.put("shortUrl", visitorApiUrl + "/" + key);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
