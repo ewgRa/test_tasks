@@ -1,4 +1,4 @@
-package com.ewgra.user_api.service;
+package com.ewgra.shorten_api.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;

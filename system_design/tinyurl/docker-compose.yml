@@ -1,43 +1,43 @@
 version: '3.8'
 services:
-  user-app:
+  shorten-app:
     image: nginx:latest
     environment:
       - API_URL=http://localhost:8081
     volumes:
-      - ./user-app/nginx.template:/etc/nginx/templates/app.conf.template:ro
-      - ./user-app/www:/www/data:ro
+      - ./shorten-app/nginx.template:/etc/nginx/templates/app.conf.template:ro
+      - ./shorten-app/www:/www/data:ro
     ports:
       - "8080:8080"
     depends_on:
-      - user-api-load-balancer
+      - shorten-api-load-balancer
 
-  user-api-api-swagger:
+  shorten-api-api-swagger:
     image: swaggerapi/swagger-ui
     ports:
       - 8090:8080
     environment:
       - SWAGGER_JSON=/swagger.yaml
     volumes:
-      - ./user-api/swagger.yaml:/swagger.yaml:delegated
+      - ./shorten-api/swagger.yaml:/swagger.yaml:delegated
     depends_on:
-      - user-api-load-balancer
+      - shorten-api-load-balancer
 
-  user-api-load-balancer:
+  shorten-api-load-balancer:
     image: nginx:latest
     volumes:
-      - ./build/user-api-lb.nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./build/shorten-api-lb.nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - user-api
+      - shorten-api
     ports:
       - "8081:8080"
 
-  user-api:
+  shorten-api:
     build:
       context: .
       dockerfile: build/Dockerfile.local
     depends_on:
-      - user-api-key-generation-service-load-balancer
+      - key-generation-service-load-balancer
       - postgres
     ports:
       - 5005-5105:5005
@@ -48,7 +48,7 @@ services:
 
     volumes:
       - maven_repo:/root/.m2/repository
-      - ./user-api:/app:delegated
+      - ./shorten-api:/app:delegated
     working_dir: /app
     command: mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dlogging.level.com.ewgra=DEBUG -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     healthcheck:
@@ -57,14 +57,14 @@ services:
       timeout: 2s
       retries: 5
 
-  user-api-key-generation-service-load-balancer:
+  key-generation-service-load-balancer:
     image: nginx:latest
     volumes:
-      - ./build/user-api-key-generation-service-lb.nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./build/key-generation-service-lb.nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - user-api-key-generation-service
+      - key-generation-service
 
-  user-api-key-generation-service:
+  key-generation-service:
     image: ewgra/key_generation_service:0.0.1
     depends_on:
       - zoo1

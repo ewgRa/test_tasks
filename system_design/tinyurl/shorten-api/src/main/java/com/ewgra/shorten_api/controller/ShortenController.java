@@ -1,8 +1,8 @@
-package com.ewgra.user_api.controller;
+package com.ewgra.shorten_api.controller;
 
-import com.ewgra.user_api.model.UrlMap;
-import com.ewgra.user_api.repository.UrlMapRepository;
-import com.ewgra.user_api.service.KeyGenerationService;
+import com.ewgra.shorten_api.model.UrlMap;
+import com.ewgra.shorten_api.repository.UrlMapRepository;
+import com.ewgra.shorten_api.service.KeyGenerationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

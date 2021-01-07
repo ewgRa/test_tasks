@@ -1,6 +1,6 @@
-package com.ewgra.user_api.repository;
+package com.ewgra.shorten_api.repository;
 
-import com.ewgra.user_api.model.UrlMap;
+import com.ewgra.shorten_api.model.UrlMap;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

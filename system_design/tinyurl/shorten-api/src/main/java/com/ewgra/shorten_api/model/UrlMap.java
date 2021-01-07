@@ -1,4 +1,4 @@
-package com.ewgra.user_api.model;
+package com.ewgra.shorten_api.model;
 
 import lombok.Getter;
 import lombok.Setter;

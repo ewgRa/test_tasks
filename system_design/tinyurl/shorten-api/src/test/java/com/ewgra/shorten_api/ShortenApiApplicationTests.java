@@ -1,10 +1,10 @@
-package com.ewgra.user_api;
+package com.ewgra.shorten_api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class UserApiApplicationTests {
+class ShortenApiApplicationTests {
 
     @Test
     void contextLoads() {

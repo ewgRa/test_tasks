@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ewgra</groupId>
-	<artifactId>tiny_url</artifactId>
+	<artifactId>shorten_api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>tiny_url</name>
-	<description>Tiny URL</description>
+	<name>shorten_api</name>
+	<description>Tiny URL Shorten API</description>
 
 	<properties>
 		<java.version>15</java.version>

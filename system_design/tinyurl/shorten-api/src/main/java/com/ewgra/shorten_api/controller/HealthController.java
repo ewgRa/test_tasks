@@ -1,4 +1,4 @@
-package com.ewgra.user_api.controller;
+package com.ewgra.shorten_api.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

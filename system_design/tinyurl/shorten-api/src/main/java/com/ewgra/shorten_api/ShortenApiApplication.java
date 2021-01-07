@@ -1,4 +1,4 @@
-package com.ewgra.user_api;
+package com.ewgra.shorten_api;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -10,10 +10,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 @EnableRetry
-public class UserApiApplication {
+public class ShortenApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(UserApiApplication.class, args);
+        SpringApplication.run(ShortenApiApplication.class, args);
     }
 
     @Bean
