@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -27,9 +29,10 @@ public class ShortenController {
     UrlMapRepository repository;
 
     @PostMapping("/shorten")
-    public ResponseEntity<Object> key() {
+    public ResponseEntity<Object> key(@RequestBody Map<String, Object> payload) {
         String key;
 
+        // FIXME XXX: validation
         try {
             key = keyGenerationService.generate();
         } catch (Exception e) {
@@ -39,7 +42,7 @@ public class ShortenController {
 
         UrlMap urlMap = new UrlMap();
         urlMap.setShortUrl(key);
-        urlMap.setLongUrl("fff");
+        urlMap.setLongUrl((String) payload.get("longUrl"));
 
         // FIXME XXX: do it better
         // FIXME XXX: CircuitBreaker

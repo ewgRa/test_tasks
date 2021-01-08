@@ -1,5 +1,6 @@
 package com.ewgra.visitor_app.controller;
 
+import com.ewgra.visitor_app.model.UrlMap;
 import com.ewgra.visitor_app.repository.UrlMapRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.HashMap;
 
@@ -19,12 +22,19 @@ public class VisitorController {
     UrlMapRepository repository;
 
     @GetMapping("/{key}")
-    public ResponseEntity<Object> visit(@PathVariable String key) {
-        HashMap<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("key", key);
+    public RedirectView visit(@PathVariable String key) {
+        // FIXME XXX: Circuit Breaker
+        // FIXME XXX: Exceptions
+        // FIXME XXX: Timeout
+        UrlMap urlMap = repository.findByShortUrl(key);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        if(urlMap == null) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "entity not found"
+            );
+        }
+
+        return new RedirectView(urlMap.getLongUrl());
     }
 
     private ResponseEntity<Object> internalServerError(String message) {
