@@ -36,7 +36,7 @@ services:
       - zoo2
       - zoo3
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health/readiness"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
       interval: 2s
       timeout: 2s
       retries: 5
