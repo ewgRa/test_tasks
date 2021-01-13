@@ -26,7 +26,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /health/liveness:
+  /actuator/health/liveness:
     get:
       summary: Liveness probe. If response it not OK - application should be restarted
       operationId: healthLiveness
@@ -38,7 +38,7 @@ paths:
         '503':
           description: Application needs to be restarted.
 
-  /health/readiness:
+  /actuator/health/readiness:
     get:
       summary: Readiness probe. If response it not OK - application is not ready to process requests.
       operationId: healthReadiness
