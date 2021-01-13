@@ -1,10 +1,10 @@
 package com.ewgra.visitor_app.controller;
 
 import com.ewgra.visitor_app.model.UrlMap;
+import com.ewgra.visitor_app.service.CacheService;
 import com.ewgra.visitor_app.service.UrlMapService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +17,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class VisitorController {
 
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private CacheService cacheService;
 
     @Autowired
     UrlMapService urlMapService;
@@ -30,13 +30,27 @@ public class VisitorController {
             longUrl = getFromDatabase(key);
         }
 
-        redisTemplate.opsForValue().set(key, longUrl);
+        cache(key, longUrl);
 
         return new RedirectView(longUrl);
     }
 
     private String getFromCache(String key) {
-        return redisTemplate.opsForValue().get(key);
+        try {
+            return cacheService.get(key);
+        } catch (Exception e) {
+            log.warn("Unable to get key from cache", e);
+        }
+
+        return null;
+    }
+
+    private void cache(String key, String longUrl) {
+        try {
+            cacheService.set(key, longUrl);
+        } catch (Exception e) {
+            log.warn("Unable to store cache", e);
+        }
     }
 
     private String getFromDatabase(String key) {
