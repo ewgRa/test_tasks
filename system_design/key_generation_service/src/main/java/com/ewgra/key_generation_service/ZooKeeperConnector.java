@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class ZooKeeperConnector implements DisposableBean {
     private ZooKeeper zoo;
 
-    @Value("${zooKeeperConnectString}")
+    @Value("${kgs.zookeeper.connect.string}")
     private String connectString;
 
     private final int SESSION_TIMEOUT = 60000; // ms

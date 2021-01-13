@@ -21,8 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(properties = { "zooKeeperNode=/test-counter" })
-@TestPropertySource(properties = { "counterRangeCapacity=3" })
+@TestPropertySource(properties = { "kgs.zookeeper.node=/test-counter" })
+@TestPropertySource(properties = { "kgs.counter.range.capacity=3" })
 public class CounterBasedControllerTest {
     private static final String ZOO_KEEPER_NODE = "/test-counter";
 

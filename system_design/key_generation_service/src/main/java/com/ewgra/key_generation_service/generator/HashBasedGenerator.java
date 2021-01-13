@@ -16,7 +16,7 @@ public class HashBasedGenerator {
     private final String salt;
     private final CounterBasedGenerator counterBasedGenerator;
 
-    public HashBasedGenerator(CounterBasedGenerator counterBasedGenerator, @Value("${hashSalt}") String salt) {
+    public HashBasedGenerator(CounterBasedGenerator counterBasedGenerator, @Value("${kgs.hash.salt}") String salt) {
         this.counterBasedGenerator = counterBasedGenerator;
         this.salt = salt;
     }

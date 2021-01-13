@@ -17,7 +17,7 @@ public class KeyGenerationServiceApplication {
     }
 
     @Bean
-    public WebMvcConfigurer corsConfigurer(@Value("${corsOrigins}") String corsOrigins) {
+    public WebMvcConfigurer corsConfigurer(@Value("${kgs.cors.origins}") String corsOrigins) {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {

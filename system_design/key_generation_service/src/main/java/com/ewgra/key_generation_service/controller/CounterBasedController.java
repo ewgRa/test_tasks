@@ -29,7 +29,7 @@ public class CounterBasedController {
     @Autowired
     ZooKeeperConnector zooKeeperConnector;
 
-    @Value("${zooKeeperNode}")
+    @Value("${kgs.zookeeper.node}")
     private String nodePath;
 
     @PutMapping("/counter-based/init")

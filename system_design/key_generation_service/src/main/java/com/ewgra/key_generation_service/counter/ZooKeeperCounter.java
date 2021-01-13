@@ -17,10 +17,10 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @Component
 public class ZooKeeperCounter {
-    @Value("${zooKeeperNode}")
+    @Value("${kgs.zookeeper.node}")
     private String nodePath;
 
-    @Value("${counterRangeCapacity}")
+    @Value("${kgs.counter.range.capacity}")
     private int rangeCapacity;
 
     private long rangeEnd;
