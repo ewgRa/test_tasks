@@ -19,7 +19,7 @@ import java.util.Map;
 @RestController
 public class ShortenController {
 
-    @Value("${shortenapi.visitorapi.url}")
+    @Value("${shorten.api.visitor.api.url}")
     String visitorApiUrl;
 
     @Autowired

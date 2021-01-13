@@ -20,6 +20,8 @@ public class VisitorController {
 
     @GetMapping("/{key}")
     public RedirectView visit(@PathVariable String key) {
+        // FIXME XXX redis connection healthcheck
+
         UrlMap urlMap;
 
         try {

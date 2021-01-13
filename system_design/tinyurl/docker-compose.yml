@@ -42,9 +42,9 @@ services:
     ports:
       - 5005-5105:5005
     environment:
-      SHORTENAPI_POSTGRES_URL: jdbc:postgresql://postgres:5432/tiny_url
-      SHORTENAPI_POSTGRES_USER: postgres
-      SHORTENAPI_POSTGRES_PASSWORD: G3sfF7@tFd#
+      SHORTEN_API_POSTGRES_URL: jdbc:postgresql://postgres:5432/tiny_url
+      SHORTEN_API_POSTGRES_USER: postgres
+      SHORTEN_API_POSTGRES_PASSWORD: G3sfF7@tFd#
     volumes:
       - maven_repo:/root/.m2/repository
       - ./shorten-api:/app:delegated
@@ -116,9 +116,9 @@ services:
     ports:
       - 5106-5205:5005
     environment:
-      POSTGRES_URL: jdbc:postgresql://postgres:5432/tiny_url
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: G3sfF7@tFd#
+      VISITOR_APP_POSTGRES_URL: jdbc:postgresql://postgres:5432/tiny_url
+      VISITOR_APP_POSTGRES_USER: postgres
+      VISITOR_APP_POSTGRES_PASSWORD: G3sfF7@tFd#
     volumes:
       - maven_repo:/root/.m2/repository
       - ./visitor-app:/app:delegated

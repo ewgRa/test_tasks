@@ -17,7 +17,7 @@ public class ShortenApiApplication {
     }
 
     @Bean
-    public WebMvcConfigurer corsConfigurer(@Value("${shortenapi.cors.origins}") String corsOrigins) {
+    public WebMvcConfigurer corsConfigurer(@Value("${shorten.api.cors.origins}") String corsOrigins) {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
