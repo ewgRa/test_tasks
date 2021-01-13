@@ -19,7 +19,7 @@ public class KeyGenerationService {
     private final int SOCKET_TIMEOUT = 500;
     private final int CONNECTION_REQUEST_TIMEOUT = 50;
 
-    @Value("${keyGenerationServiceUrl}")
+    @Value("${shortenapi.kgs.url}")
     String url;
 
     @CircuitBreaker
