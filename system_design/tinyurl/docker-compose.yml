@@ -76,24 +76,18 @@ services:
 
   zoo1:
     image: zookeeper
-    restart: always
-    hostname: zoo1
     environment:
       ZOO_MY_ID: 1
       ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
 
   zoo2:
     image: zookeeper
-    restart: always
-    hostname: zoo2
     environment:
       ZOO_MY_ID: 2
       ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zoo3:2888:3888;2181
 
   zoo3:
     image: zookeeper
-    restart: always
-    hostname: zoo3
     environment:
       ZOO_MY_ID: 3
       ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
@@ -113,6 +107,7 @@ services:
       dockerfile: build/Dockerfile.local
     depends_on:
       - postgres
+      - redis
     ports:
       - 5106-5205:5005
     environment:
@@ -129,6 +124,11 @@ services:
       interval: 2s
       timeout: 2s
       retries: 5
+
+  redis:
+    build:
+      context: .
+      dockerfile: build/Dockerfile.redis.local
 
   postgres:
     image: postgres
