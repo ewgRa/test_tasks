@@ -11,4 +11,8 @@ import javax.persistence.QueryHint;
 public interface UrlMapRepository extends JpaRepository<UrlMap, String> {
     @QueryHints(value = { @QueryHint(name = "org.hibernate.timeout", value = "1") })
     UrlMap findByShortUrl(String shortUrl);
+
+    @QueryHints(value = { @QueryHint(name = "org.hibernate.timeout", value = "1") })
+    @Override
+    <S extends UrlMap> S save(S entity);
 }

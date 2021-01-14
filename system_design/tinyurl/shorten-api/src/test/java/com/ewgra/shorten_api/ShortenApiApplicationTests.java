@@ -8,6 +8,7 @@ class ShortenApiApplicationTests {
 
     @Test
     void contextLoads() {
+        // FIXME XXX: tests
     }
 
 }
