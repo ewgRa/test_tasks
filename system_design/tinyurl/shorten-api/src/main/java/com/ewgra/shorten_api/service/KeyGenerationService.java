@@ -2,6 +2,7 @@ package com.ewgra.shorten_api.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -28,11 +29,18 @@ public class KeyGenerationService implements DisposableBean {
     @CircuitBreaker
     public String generate() throws Exception {
         HttpResponse response = client().execute(new HttpGet(url + "/counter-based/key"));
+
+        if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+            throw new Exception("Key Generation Service respond with unexpected code.");
+        }
+
         String responseBody = EntityUtils.toString(response.getEntity());
         JSONObject json = new JSONObject(responseBody);
 
-        // FIXME XXX: check response code
-        // int statusCode = response.getStatusLine().getStatusCode();
+        if (!json.has("key") || json.getString("key").isEmpty()) {
+            throw new Exception("Key Generation Service respond with invalid key");
+        }
+
         return json.getString("key");
     }
 

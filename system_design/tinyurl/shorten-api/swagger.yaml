@@ -1,16 +1,15 @@
 openapi: "3.0.0"
 info:
   version: 1.0.0
-  title: Tiny URL User API
+  title: Shorten API
   license:
     name: MIT
 servers:
   - url: http://localhost:8081
 paths:
-  # FIXME XXX: check me
   /shorten:
     post:
-      summary: "Shorten long URL into a tiny URL. FIXME XXX: rate limiter response"
+      summary: "Shorten long URL into a short URL."
       responses:
         '200':
           description: URL successfully shorten.
@@ -21,7 +20,7 @@ paths:
                 required:
                   - shortUrl
                 properties:
-                  tinyUrl:
+                  shortUrl:
                     type: string
         '500':
           $ref: '#/components/responses/InternalServerError'
