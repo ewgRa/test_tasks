@@ -10,8 +10,8 @@ init:
 
 .PHONY: test
 test:
-	cd shorten-api && make test
-	cd visitor-app && make test
+	docker-compose exec shorten-api make test
+	docker-compose exec visitor-app make test
 
 .PHONY: lint
 lint:

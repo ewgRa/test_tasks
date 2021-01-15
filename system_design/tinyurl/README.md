@@ -1,4 +1,3 @@
-// FIXME XXX: ci
 // FIXME XXX: cypress tests?
 
 # Task definition
