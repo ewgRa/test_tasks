@@ -5,6 +5,7 @@
             function make() {
               document.getElementById("successResult").classList.add("hidden");
               document.getElementById("errorResult").classList.add("hidden");
+              document.getElementById("badRequestResult").classList.add("hidden");
 
               var xhttp = new XMLHttpRequest();
 
@@ -16,6 +17,8 @@
                     document.getElementById("longUrlInput").value = "";
                     document.getElementById("shortUrl").innerHTML = '<a href="'+json.shortUrl+'">'+json.shortUrl+'</a>';
                     document.getElementById("successResult").classList.remove("hidden");
+                  } else if (this.status == 400) {
+                    document.getElementById("badRequestResult").classList.remove("hidden");
                   } else {
                     document.getElementById("errorResult").classList.remove("hidden");
                   }
@@ -36,7 +39,7 @@
                 color: green;
             }
 
-            #errorResult {
+            #errorResult, #badRequestResult {
                 color: red;
             }
 
@@ -64,6 +67,9 @@
         <div id="errorResult" class="hidden">
             Something bad happen :(<br />
             Please try again later.
+        </div>
+        <div id="badRequestResult" class="hidden">
+            Bad request. Please check, that the provided URL is valid link. Only HTTP and HTTPS protocols are allowed.
         </div>
     </body>
 </html>
