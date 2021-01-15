@@ -30,7 +30,7 @@ services:
       - maven_repo:/root/.m2/repository
       - "$PWD:/app:delegated"
     working_dir: /app
-    command: mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dlogging.level.com.ewgra=DEBUG -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    command: mvn spring-boot:run -DbuildDirectory=../target -Dspring-boot.run.jvmArguments="-Dlogging.level.com.ewgra=DEBUG -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     depends_on:
       - zoo1
       - zoo2

@@ -46,11 +46,8 @@ public class KeyGenerationService implements DisposableBean {
 
     private CloseableHttpClient client() {
         if (client == null) {
-            RequestConfig config = RequestConfig.custom()
-                    .setConnectTimeout(CONNECT_TIMEOUT)
-                    .setSocketTimeout(SOCKET_TIMEOUT)
-                    .setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT)
-                    .build();
+            RequestConfig config = RequestConfig.custom().setConnectTimeout(CONNECT_TIMEOUT)
+                    .setSocketTimeout(SOCKET_TIMEOUT).setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT).build();
 
             client = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
         }

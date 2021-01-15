@@ -15,10 +15,8 @@ public class KeyGenerationServiceHealthIndicator implements HealthIndicator {
 
     @Override
     public Health health() {
-        ResponseEntity<String> response = createRestTemplate().getForEntity(
-            url+"/actuator/health/readiness",
-            String.class
-        );
+        ResponseEntity<String> response = createRestTemplate().getForEntity(url + "/actuator/health/readiness",
+                String.class);
 
         if (!response.getStatusCode().is2xxSuccessful()) {
             return Health.down().build();

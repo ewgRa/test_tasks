@@ -16,6 +16,7 @@
 
 	<properties>
 		<java.version>15</java.version>
+		<buildDirectory>${project.basedir}/target</buildDirectory>
 	</properties>
 
 	<dependencies>
@@ -68,6 +69,7 @@
 	</dependencies>
 
 	<build>
+		<directory>${buildDirectory}</directory>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

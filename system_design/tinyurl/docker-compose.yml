@@ -49,7 +49,7 @@ services:
       - maven_repo:/root/.m2/repository
       - ./shorten-api:/app:delegated
     working_dir: /app
-    command: mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dlogging.level.com.ewgra=DEBUG -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    command: mvn spring-boot:run -DbuildDirectory=../target -Dspring-boot.run.jvmArguments="-Dlogging.level.com.ewgra=DEBUG -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
       interval: 2s
@@ -118,7 +118,7 @@ services:
       - maven_repo:/root/.m2/repository
       - ./visitor-app:/app:delegated
     working_dir: /app
-    command: mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dlogging.level.com.ewgra=DEBUG -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    command: mvn spring-boot:run -DbuildDirectory=../target -Dspring-boot.run.jvmArguments="-Dlogging.level.com.ewgra=DEBUG -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
       interval: 2s

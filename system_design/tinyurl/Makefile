@@ -17,3 +17,8 @@ test:
 lint:
 	cd shorten-api && make lint
 	cd visitor-app && make lint
+
+.PHONY: format
+format:
+	cd shorten-api && make format
+	cd visitor-app && make format
