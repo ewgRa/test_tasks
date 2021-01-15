@@ -1,3 +1,5 @@
+[![System design - Tiny URL - CI](https://github.com/ewgRa/test_tasks/workflows/System%20design%20-%20Tiny%20URL%20-%20CI/badge.svg?branch=master)](https://github.com/ewgRa/test_tasks/actions?query=workflow%3A%22System+design+-+Tiny+URL+-+CI%22+branch%3Amaster)
+
 // FIXME XXX: cypress tests?
 
 # Task definition

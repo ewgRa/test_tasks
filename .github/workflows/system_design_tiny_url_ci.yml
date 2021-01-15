@@ -6,7 +6,7 @@ jobs:
   ci:
     defaults:
       run:
-        working-directory: system_design/tiny_url
+        working-directory: system_design/tinyurl
     if: github.repository == 'ewgra/test_tasks'
     runs-on: ubuntu-18.04
     steps:
