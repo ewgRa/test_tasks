@@ -7,11 +7,11 @@ Develop URL shortening web service, which provides short aliases for redirection
 ###Functional requirements:
 
 - User needs to be able to enter long url. Our service should save that url and generate a short link.
-- Clicking on the short link our service should redirect the user to original long url
+- Clicking on the short link our service should redirect the user to original long url.
 - User should have the option to enter the expiration date. After that date passed, short link should be invalid.*
-- Users should create an account to use service. Service can have usage limit per user*
-- User is allowed to create his own short link*
-- Service should have metrics, for example, most visited links*
+- Users should create an account to use service. Service can have usage limit per user.*
+- User is allowed to create his own short link.*
+- Service should have metrics, for example, most visited links.*
 
 *\* nice to have, out of the scope of the current implementation*
 
@@ -22,7 +22,7 @@ Develop URL shortening web service, which provides short aliases for redirection
 
 **Rate limiting** should be considered for Shorten API and Visitor APP. It is up to the developer on how to implement it. If your Load Balancer supports rate limiting - it is the best option. Otherwise, you can implement it on the application level (Bucket4j, Resilience4j, Google Guava, etc.).
 
-As **database** you can use any highly available storage, since the uniqueness of keys guaranteed by Key Generation Service.
+As **database** you can use any high available storage, since the uniqueness of keys guaranteed by Key Generation Service.
 
 # Usage
 - Run `make up`
