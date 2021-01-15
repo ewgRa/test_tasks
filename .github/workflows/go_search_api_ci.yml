@@ -38,6 +38,6 @@ jobs:
           WAIT_HOSTS: localhost:9200
         run: |
           docker-compose up -d api-storage
-          timeout 20 bash -c 'until docker-compose ps api-storage | grep -q \(healthy\); do sleep 2; done' || false
+          timeout 20 bash -c 'until docker-compose ps api-storage | grep -q \(healthy\); do sleep 2; done' || (docker-compose ps && false)
           make test
           docker-compose stop
