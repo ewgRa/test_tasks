@@ -1,3 +1,7 @@
+.PHONY: up
+up:
+	docker-compose up
+
 .PHONY: init
 init:
 	docker-compose exec shorten-api curl -XPUT key-generation-service:8080/counter-based/init
