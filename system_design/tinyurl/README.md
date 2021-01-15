@@ -26,6 +26,6 @@ Develop URL shortening web service, which provides short aliases for redirection
 As **database** you can use any high available storage, since the uniqueness of keys guaranteed by Key Generation Service.
 
 # Usage
+- Run `make init`
 - Run `make up`
-- Open new terminal and run `make init`
 - Open in browser http://localhost:8080/
