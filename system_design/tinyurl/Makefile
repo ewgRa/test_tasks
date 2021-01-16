@@ -5,6 +5,7 @@ up:
 .PHONY: init
 init:
 	docker-compose up -d postgres
+	sleep 2
 	docker-compose exec -T -u postgres postgres createdb tiny_url
 	docker-compose up -d shorten-api
 	docker-compose exec -T shorten-api mvn flyway:migrate
