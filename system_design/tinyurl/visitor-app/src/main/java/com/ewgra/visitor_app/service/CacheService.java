@@ -19,4 +19,8 @@ public class CacheService {
     public void set(String key, String longUrl) {
         redisTemplate.opsForValue().set(key, longUrl);
     }
+
+    public void clean() {
+        redisTemplate.getConnectionFactory().getConnection().flushDb();
+    }
 }

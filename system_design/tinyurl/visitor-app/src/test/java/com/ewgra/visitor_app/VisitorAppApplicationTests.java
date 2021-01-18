@@ -8,7 +8,6 @@ class VisitorAppApplicationTests {
 
     @Test
     void contextLoads() {
-        // FIXME XXX: tests?
     }
 
 }
