@@ -9,7 +9,7 @@ shell-docker-api:
 
 .PHONY: test
 test:
-	mvn test -Dspring.profiles.active=test
+	mvn test
 
 .PHONY: lint
 lint:

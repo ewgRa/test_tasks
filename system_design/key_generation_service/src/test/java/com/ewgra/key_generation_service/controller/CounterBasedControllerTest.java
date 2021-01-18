@@ -6,8 +6,10 @@ import org.apache.zookeeper.data.Stat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
@@ -20,8 +22,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class CounterBasedControllerTest {
-    private static final String ZOO_KEEPER_NODE = "/test-counter";
+    @Value("${kgs.zookeeper.node}")
+    String zooKeeperNode;
 
     @Autowired
     ZooKeeperConnector zooKeeperConnector;
@@ -32,10 +36,10 @@ public class CounterBasedControllerTest {
     @BeforeEach
     public void setUp() throws Exception {
         ZooKeeper zoo = zooKeeperConnector.getConnection();
-        Stat stat = zoo.exists(ZOO_KEEPER_NODE, null);
+        Stat stat = zoo.exists(zooKeeperNode, null);
 
         if (stat != null) {
-            zoo.delete(ZOO_KEEPER_NODE, stat.getVersion());
+            zoo.delete(zooKeeperNode, stat.getVersion());
         }
 
         this.mockMvc.perform(put("/counter-based/init")).andExpect(status().isCreated());
@@ -53,7 +57,7 @@ public class CounterBasedControllerTest {
         }
 
         Stat stat = new Stat();
-        byte[] data = zooKeeperConnector.getConnection().getData(ZOO_KEEPER_NODE, null, stat);
+        byte[] data = zooKeeperConnector.getConnection().getData(zooKeeperNode, null, stat);
         String number = new String(data, StandardCharsets.UTF_8);
 
         assertThat(number).isEqualTo("6");
