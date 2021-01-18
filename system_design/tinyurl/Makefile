@@ -5,7 +5,7 @@ up:
 .PHONY: init
 init:
 	docker-compose up -d postgres
-	sleep 2
+	timeout 20 bash -c 'until docker-compose exec -T -u postgres postgres psql -c "select 1"; do sleep 2; done' || (docker-compose ps && false)
 	docker-compose exec -T -u postgres postgres createdb tiny_url
 	docker-compose exec -T -u postgres postgres createdb tiny_url_test
 	docker-compose up -d shorten-api
