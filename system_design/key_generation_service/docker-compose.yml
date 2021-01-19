@@ -18,12 +18,14 @@ services:
     depends_on:
       - api
     ports:
-      - "8080:8080"
+      - "8081:8080"
 
   api:
     build:
       context: .
       dockerfile: build/Dockerfile.local
+    environment:
+      KGS_ZOOKEEPER_CONNECT_STRING: zoo1:2181,zoo2:2181,zoo3:2181
     ports:
       - 5005-5105:5005
     volumes:
@@ -46,18 +48,24 @@ services:
     environment:
       ZOO_MY_ID: 1
       ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    ports:
+      - 2181:2181
 
   zoo2:
     image: zookeeper
     environment:
       ZOO_MY_ID: 2
       ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    ports:
+      - 2182:2181
 
   zoo3:
     image: zookeeper
     environment:
       ZOO_MY_ID: 3
       ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+    ports:
+      - 2183:2181
 
 volumes:
   maven_repo:

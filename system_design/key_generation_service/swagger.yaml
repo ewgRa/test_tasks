@@ -5,7 +5,10 @@ info:
   license:
     name: MIT
 servers:
+  - url: http://localhost:8081
+    description: Development (docker-compose)
   - url: http://localhost:8080
+    description: Development
 paths:
   /counter-based/init:
     put:
