@@ -2,9 +2,11 @@ package com.ewgra.key_generation_service.generator;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ActiveProfiles("test")
 public class CounterBasedGeneratorTest {
     @ParameterizedTest
     @CsvSource({ "276098692598697967,lM2vEtkHyu", "839299365868340223,9999999999" })

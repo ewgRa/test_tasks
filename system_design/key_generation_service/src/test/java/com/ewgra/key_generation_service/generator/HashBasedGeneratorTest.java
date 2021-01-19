@@ -1,10 +1,12 @@
 package com.ewgra.key_generation_service.generator;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+@ActiveProfiles("test")
 public class HashBasedGeneratorTest {
     @Test
     public void generate() {

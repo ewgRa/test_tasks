@@ -1,12 +1,14 @@
 package com.ewgra.key_generation_service.generator;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.function.LongSupplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+@ActiveProfiles("test")
 public class RandomBasedGeneratorTest {
     @Test
     public void generate() {
