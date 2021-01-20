@@ -12,7 +12,6 @@ services:
       KGS_ZOOKEEPER_CONNECT_STRING: zoo1:2181,zoo2:2181,zoo3:2181
       KGS_ZOOKEEPER_NODE: /key_generation_service_counter
       KGS_COUNTER_RANGE_CAPACITY: 10000
-
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health/readiness"]
       interval: 2s
