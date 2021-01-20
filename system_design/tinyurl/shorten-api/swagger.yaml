@@ -8,13 +8,12 @@ servers:
   - url: http://localhost:8084
     description: Development (docker)
   - url: http://localhost:8081
-    description: Development (docker)
+    description: Development
 paths:
   /shorten:
     post:
       summary: "Shorten long URL into a short URL."
       requestBody:
-        description: Optional description in *Markdown*
         required: true
         content:
           application/json:
