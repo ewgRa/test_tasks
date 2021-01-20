@@ -3,7 +3,7 @@ services:
   shorten-app:
     image: nginx:latest
     environment:
-      API_URL: http://localhost:8081
+      API_URL: http://localhost:8084
     volumes:
       - ./shorten-app/nginx.template:/etc/nginx/templates/app.conf.template:ro
       - ./shorten-app/www:/www/data:ro
@@ -30,7 +30,7 @@ services:
     depends_on:
       - shorten-api
     ports:
-      - "8081:8080"
+      - "8084:8081"
 
   shorten-api:
     build:
@@ -42,16 +42,17 @@ services:
     ports:
       - 5005-5105:5005
     environment:
-      SHORTEN_API_POSTGRES_URL: jdbc:postgresql://postgres:5432/tiny_url
-      SHORTEN_API_POSTGRES_USER: postgres
-      SHORTEN_API_POSTGRES_PASSWORD: G3sfF7@tFd#
+      SHORTEN_API_POSTGRES_URL: jdbc:postgresql://postgres:5432
+      SHORTEN_API_KEY_GENERATION_SERVICE_URL: http://key-generation-service-load-balancer:8080
+      SHORTEN_API_KEY_GENERATION_SERVICE_TEST_URL: http://key-generation-service-test:8080
+      SHORTEN_API_VISITOR_APP_URL: http://localhost:8089
     volumes:
       - maven_repo:/root/.m2/repository
       - ./shorten-api:/app:delegated
     working_dir: /app
     command: mvn spring-boot:run -DbuildDirectory=../target -Dspring-boot.run.jvmArguments="-Dlogging.level.com.ewgra=DEBUG -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health/readiness"]
       interval: 2s
       timeout: 2s
       retries: 5
@@ -73,6 +74,26 @@ services:
       KGS_ZOOKEEPER_CONNECT_STRING: zoo1:2181,zoo2:2181,zoo3:2181
       KGS_ZOOKEEPER_NODE: /key_generation_service_counter
       KGS_COUNTER_RANGE_CAPACITY: 100
+    ports:
+      - 8095:8080
+
+  key-generation-service-test:
+    image: ewgra/key_generation_service:0.0.2
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+    environment:
+      KGS_ZOOKEEPER_CONNECT_STRING: zoo1:2181,zoo2:2181,zoo3:2181
+      KGS_ZOOKEEPER_NODE: /counter-test
+      KGS_COUNTER_RANGE_CAPACITY: 3
+    ports:
+      - 8096:8080
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
 
   zoo1:
     image: zookeeper
@@ -99,7 +120,7 @@ services:
     depends_on:
       - visitor-app
     ports:
-      - "8082:8080"
+      - "8089:8085"
 
   visitor-app:
     build:
@@ -111,17 +132,15 @@ services:
     ports:
       - 5106-5205:5005
     environment:
-      VISITOR_APP_POSTGRES_URL: jdbc:postgresql://postgres:5432/tiny_url
-      VISITOR_APP_POSTGRES_TEST_URL: jdbc:postgresql://postgres:5432/tiny_url_test
-      VISITOR_APP_POSTGRES_USER: postgres
-      VISITOR_APP_POSTGRES_PASSWORD: G3sfF7@tFd#
+      VISITOR_APP_REDIS_HOST: redis
+      VISITOR_APP_POSTGRES_URL: jdbc:postgresql://postgres:5432
     volumes:
       - maven_repo:/root/.m2/repository
       - ./visitor-app:/app:delegated
     working_dir: /app
     command: mvn spring-boot:run -DbuildDirectory=../target -Dspring-boot.run.jvmArguments="-Dlogging.level.com.ewgra=DEBUG -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
+      test: ["CMD", "curl", "-f", "http://localhost:8085/actuator/health/readiness"]
       interval: 2s
       timeout: 2s
       retries: 5
@@ -130,11 +149,15 @@ services:
     build:
       context: .
       dockerfile: build/Dockerfile.redis.local
+    ports:
+      - 6379:6379
 
   postgres:
     image: postgres
     environment:
       POSTGRES_PASSWORD: G3sfF7@tFd#
+    ports:
+      - 5432:5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
 

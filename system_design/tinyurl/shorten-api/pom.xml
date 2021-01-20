@@ -91,9 +91,6 @@
 				<artifactId>flyway-maven-plugin</artifactId>
 				<configuration>
 					<driver>org.postgresql.Driver</driver>
-					<url>${env.SHORTEN_API_POSTGRES_URL}</url>
-					<user>${env.SHORTEN_API_POSTGRES_USER}</user>
-					<password>${env.SHORTEN_API_POSTGRES_PASSWORD}</password>
 					<baselineOnMigrate>true</baselineOnMigrate>
 					<schemas>public</schemas>
 					<locations>

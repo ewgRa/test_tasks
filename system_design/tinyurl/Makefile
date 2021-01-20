@@ -6,13 +6,14 @@ up:
 init:
 	docker-compose up -d postgres
 	timeout 20 bash -c 'until docker-compose exec -T -u postgres postgres psql -c "select 1"; do sleep 2; done' || (docker-compose ps && false)
-	docker-compose exec -T -u postgres postgres createdb tiny_url
+	docker-compose exec -T -u postgres postgres createdb tiny_url_dev
 	docker-compose exec -T -u postgres postgres createdb tiny_url_test
 	docker-compose up -d shorten-api
-	docker-compose exec -T shorten-api mvn flyway:migrate
-	docker-compose exec -T --env SHORTEN_API_POSTGRES_URL=jdbc:postgresql://postgres:5432/tiny_url_test shorten-api mvn flyway:migrate
+	docker-compose exec -T shorten-api mvn flyway:migrate -Dflyway.user=postgres -Dflyway.password=G3sfF7@tFd# -Dflyway.url=jdbc:postgresql://postgres:5432/tiny_url_dev
+	docker-compose exec -T shorten-api mvn flyway:migrate -Dflyway.user=postgres -Dflyway.password=G3sfF7@tFd# -Dflyway.url=jdbc:postgresql://postgres:5432/tiny_url_test
 	timeout 120 bash -c 'until docker-compose ps shorten-api | grep -q \(healthy\); do sleep 2; done' || (docker-compose ps && false)
 	docker-compose exec -T shorten-api curl -XPUT key-generation-service:8080/counter-based/init
+	docker-compose exec -T shorten-api curl -XPUT key-generation-service-test:8080/counter-based/init
 	docker-compose stop
 
 .PHONY: test
