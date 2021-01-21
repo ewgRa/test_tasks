@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   api:
-    image: ewgra/key_generation_service:0.0.1
+    image: ewgra/key_generation_service:0.0.3 # check last version
     ports:
       - 8080:8080
     depends_on:

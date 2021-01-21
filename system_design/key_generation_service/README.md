@@ -14,9 +14,6 @@ Can be used as part of a solution for TinyURL and other services.
 - Initialize counter-based approach http://localhost:8090/#/counter-based/put_counter_based_init
 - Generate counter-based keys via http://localhost:8090/#/counter-based/get_counter_based_key
 
-# Development
-Please check Makefile and docker-compose.yml for understanding how the solution works under the hood.
-
 # Docker image usage
 You can find ready to use docker image on Docker Hub: https://hub.docker.com/repository/docker/ewgra/key_generation_service.
 
