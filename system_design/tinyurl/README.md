@@ -3,7 +3,7 @@
 # Task definition
 Develop URL shortening web service, which provides short aliases for redirection of long URLs.
 
-###Functional requirements:
+### Functional requirements:
 
 - User needs to be able to enter long url. Our service should save that url and generate a short link.
 - Clicking on the short link our service should redirect the user to original long url.
