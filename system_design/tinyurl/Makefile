@@ -22,7 +22,7 @@ init:
 test:
 	docker-compose exec -T shorten-api make test
 	docker-compose exec -T visitor-app make test
-	docker run --net=host -it -v ${PWD}/tests:/e2e -w /e2e cypress/included:6.3.0
+	docker run --net=host -v ${PWD}/tests:/e2e -w /e2e cypress/included:6.3.0
 
 .PHONY: lint
 lint:
