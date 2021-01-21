@@ -7,5 +7,6 @@ RUN mvn clean package -Dmaven.test.skip
 
 FROM openjdk:15-jdk-alpine
 COPY --from=build /app/target/key_generation_service-0.0.1-SNAPSHOT.jar /app/key_generation_service-0.0.1-SNAPSHOT.jar
+COPY --from=build /usr/bin/curl /usr/bin/curl
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/app/key_generation_service-0.0.1-SNAPSHOT.jar"]

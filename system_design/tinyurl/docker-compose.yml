@@ -52,7 +52,7 @@ services:
     working_dir: /app
     command: mvn spring-boot:run -DbuildDirectory=../target -Dspring-boot.run.jvmArguments="-Dlogging.level.com.ewgra=DEBUG -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health/readiness"]
+      test: "curl -f http://localhost:8081/actuator/health/readiness"
       interval: 2s
       timeout: 2s
       retries: 5
@@ -65,7 +65,7 @@ services:
       - key-generation-service
 
   key-generation-service:
-    image: ewgra/key_generation_service:0.0.2
+    image: ewgra/key_generation_service:0.0.3
     depends_on:
       - zoo1
       - zoo2
@@ -78,7 +78,7 @@ services:
       - 8095:8080
 
   key-generation-service-test:
-    image: ewgra/key_generation_service:0.0.2
+    image: ewgra/key_generation_service:0.0.3
     depends_on:
       - zoo1
       - zoo2
@@ -90,7 +90,7 @@ services:
     ports:
       - 8096:8080
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
+      test: "wget http://localhost:8080/actuator/health/readiness -q -O - > /dev/null 2>&1"
       interval: 2s
       timeout: 2s
       retries: 5
@@ -140,7 +140,7 @@ services:
     working_dir: /app
     command: mvn spring-boot:run -DbuildDirectory=../target -Dspring-boot.run.jvmArguments="-Dlogging.level.com.ewgra=DEBUG -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8085/actuator/health/readiness"]
+      test: "curl -f http://localhost:8085/actuator/health/readiness"
       interval: 2s
       timeout: 2s
       retries: 5
@@ -160,6 +160,11 @@ services:
       - 5432:5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: "pg_isready -u postgres"
+      interval: 2s
+      timeout: 2s
+      retries: 5
 
 volumes:
   maven_repo:

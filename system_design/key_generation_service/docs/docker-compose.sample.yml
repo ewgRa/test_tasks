@@ -13,7 +13,7 @@ services:
       KGS_ZOOKEEPER_NODE: /key_generation_service_counter
       KGS_COUNTER_RANGE_CAPACITY: 10000
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health/readiness"]
+      test: "wget http://localhost:8080/actuator/health/readiness -q -O - > /dev/null 2>&1"
       interval: 2s
       timeout: 2s
       retries: 5
