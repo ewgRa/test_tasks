@@ -24,45 +24,18 @@ public class VisitorController {
 
     @GetMapping("/{key}")
     public RedirectView visit(@PathVariable String key) {
-        String longUrl = getFromCache(key);
+        String longUrl = cacheService.get(key);
 
         if (longUrl == null) {
             longUrl = getFromDatabase(key);
+            cacheService.set(key, longUrl);
         }
-
-        cache(key, longUrl);
 
         return new RedirectView(longUrl);
     }
 
-    private String getFromCache(String key) {
-        try {
-            return cacheService.get(key);
-        } catch (Exception e) {
-            log.warn("Unable to get key from cache", e);
-        }
-
-        return null;
-    }
-
-    private void cache(String key, String longUrl) {
-        try {
-            cacheService.set(key, longUrl);
-        } catch (Exception e) {
-            log.warn("Unable to store cache", e);
-        }
-    }
-
     private String getFromDatabase(String key) {
-        UrlMap urlMap;
-
-        try {
-            urlMap = urlMapService.findByShortUrl(key);
-        } catch (Exception e) {
-            log.error("Unable to find short url", e);
-
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
-        }
+        UrlMap urlMap = urlMapService.findByShortUrl(key);
 
         if (urlMap == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "map not found");

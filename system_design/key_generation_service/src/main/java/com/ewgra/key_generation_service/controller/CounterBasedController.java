@@ -21,29 +21,12 @@ public class CounterBasedController {
     CounterBasedGenerator generator;
 
     @GetMapping("/counter-based/key")
-    public ResponseEntity<Object> key() {
-        long next;
-
-        try {
-            next = counter.next();
-        } catch (Exception e) {
-            log.error("Error when getting next key: " + e.getMessage());
-
-            return internalServerError("Internal server error when getting next counter value");
-        }
-
+    public ResponseEntity<Object> key() throws Exception {
+        long next = counter.next();
         HashMap<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("key", generator.generate(next));
 
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    private ResponseEntity<Object> internalServerError(String message) {
-        HashMap<String, Object> response = new HashMap<>();
-        response.put("success", false);
-        response.put("message", message);
-
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

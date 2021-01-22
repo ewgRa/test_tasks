@@ -26,29 +26,13 @@ public class ShortenController {
     UrlMapService urlMapService;
 
     @PostMapping("/shorten")
-    public ResponseEntity<Object> key(@Valid @RequestBody ShortenRequest request) {
-        UrlMap urlMap;
-
-        try {
-            urlMap = urlMapService.insert(request.getLongUrl());
-        } catch (Exception e) {
-            log.error("Unable to insert map", e);
-
-            return internalServerError("Fail to save mapping");
-        }
+    public ResponseEntity<Object> key(@Valid @RequestBody ShortenRequest request) throws Exception {
+        UrlMap urlMap = urlMapService.insert(request.getLongUrl());
 
         HashMap<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("shortUrl", visitorAppUrl + "/" + urlMap.getShortUrl());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    private ResponseEntity<Object> internalServerError(String message) {
-        HashMap<String, Object> response = new HashMap<>();
-        response.put("success", false);
-        response.put("message", message);
-
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

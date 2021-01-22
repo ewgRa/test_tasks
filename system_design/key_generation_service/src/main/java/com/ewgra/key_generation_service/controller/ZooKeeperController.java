@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 
@@ -24,43 +25,19 @@ public class ZooKeeperController {
     private String nodePath;
 
     @PutMapping("/counter-based/init")
-    public ResponseEntity<Object> init() {
+    public ResponseEntity<Object> init() throws Exception {
         ZooKeeper zoo = zooKeeperConnector.getConnection();
 
-        try {
-            if (zoo.exists(nodePath, null) != null) {
-                HashMap<String, Object> response = new HashMap<>();
-                response.put("success", false);
-
-                return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-            }
-        } catch (Exception e) {
-            log.error("Error when getting stat for node: " + e.getMessage());
-
-            return internalServerError("Internal server error when getting stat for node");
+        if (zoo.exists(nodePath, null) != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Node has been already created");
         }
 
-        try {
-            zoo.create(nodePath, "0".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-        } catch (Exception e) {
-            log.error("Error when creating node: " + e.getMessage());
-
-            return internalServerError("Internal server error when creating node");
-        }
-
+        zoo.create(nodePath, "0".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         log.debug("ZooKeeper node created");
 
         HashMap<String, Object> response = new HashMap<>();
         response.put("success", true);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-    private ResponseEntity<Object> internalServerError(String message) {
-        HashMap<String, Object> response = new HashMap<>();
-        response.put("success", false);
-        response.put("message", message);
-
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
